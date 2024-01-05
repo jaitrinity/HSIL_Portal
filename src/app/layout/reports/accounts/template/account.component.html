@@ -1,0 +1,342 @@
+<div [@routerTransition]>
+	<app-page-header [heading]="currentReportName" [icon]="'fa-users'"></app-page-header>	
+	<div class="row">
+		<div class="col col-sm-12">
+			<div class="card mb-3">
+				<div class="card-block">
+					<div class="row">
+						<div class="col-sm-2">
+							<a class="btn bnt-link btn-border btn-sm" 
+								routerLink="/accounts"
+								[routerLinkActive]="['router-link-active']"
+								[queryParams]="{ type: 'details' }"
+								[ngClass]="{'btn-info' : currentReport == 'details' }" >Account Details</a>
+						</div>
+						<div class="col-sm-2">						
+							<a class="btn bnt-link btn-border btn-sm" 						
+								routerLink="/accounts"
+								[routerLinkActive]="['router-link-active']"
+								[queryParams]="{ type: 'performance' }"
+								[ngClass]="{'btn-info' : currentReport == 'performance' }" >Account Performance</a>											
+						</div>						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>	
+	<div class="row">
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-block">
+					<div class="row">
+						<div class="col-sm-11">
+							<h4>Filters</h4>
+						</div>
+						<div class="col-sm-1" *ngIf="!isShowFilters">
+                            <button (click)="isShowFilters = true;" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-plus"></i></button>
+                        </div>
+                        <div class="col-sm-1" *ngIf="isShowFilters">
+                            <button (click)="isShowFilters = false;" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-minus"></i></button>
+                        </div>
+					</div>
+                    <div class="row" *ngIf="isShowFilters">
+                        <div class="col-sm-1 text-right">
+                            <h6>From Date</h6>
+                        </div>
+                        <div class="col-sm-2">	
+							<my-date-picker name="mydate" placeholder="yyyy/mm/dd" [options]="myDatePickerOptions"
+							(dateChanged)="onDateFromChanged($event)"></my-date-picker>													
+                           <!--  <owl-date-time [(ngModel)]="accountReportFromDate" 
+							[type]="'calendar'"
+							[dataType]="'date'"
+                            [autoClose]="true"
+                            [dateFormat]="'YYYY/MM/DD'"
+                            [placeHolder]="'YYYY/MM/DD'"
+                            [hourFormat]="'12'"
+                            [selectionMode]="'single'"
+                            name="accountReportFromDate"
+                            [locale]="en"></owl-date-time>   -->                                              
+                        </div>
+                        <div class="col-sm-1 text-right">
+                            <h6>To Date</h6>
+                        </div>
+                        <div class="col-sm-2">		
+								<my-date-picker name="mydate" placeholder="yyyy/mm/dd" [options]="myDatePickerOptions"
+								(dateChanged)="onDateFromChanged($event)"></my-date-picker>												
+                          <!--   <owl-date-time [(ngModel)]="accountReportToDate" 
+                            [type]="'calendar'"
+							[dataType]="'date'"
+                            [autoClose]="true"
+                            [dateFormat]="'YYYY/MM/DD'"
+                            [placeHolder]="'YYYY/MM/DD'"
+                            [hourFormat]="'12'"
+                            [selectionMode]="'single'"
+                            name="accountReportToDate" 
+                            [locale]="en"></owl-date-time>       -->                                          
+						</div>              
+						<div class="col-sm-2">							
+							<select class="form-control" name="importance"
+								id="importance" [(ngModel)]="importance"
+								(change)="getAccountsDetails()">
+								<option value="All">All</option>                                            
+								<option value="Priority">Priority</option>
+								<option value="Key Account">Key Account</option>
+								<option value="Other Account">Other Account</option>
+							</select>							
+						</div>
+						<div class="col-sm-2">
+							<select class="form-control" id="getAccountsDetails"
+								name="getAccountsDetails" [(ngModel)]="currentAccount"
+								(change)="getAccountsDetails()">	
+								<option value="All">All</option>
+								<option *ngFor="let item of accountTypeList" value="{{ item }}">{{ item }}</option>
+							</select>
+						</div>          
+                        <div class="col-sm-2">
+							<button type="button"
+								(click)="searchReport()"
+                                class="btn btn-sm btn-info">Get Report</button>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>   
+	<div class="row" >
+            <div class="col col-sm-12">
+                <div class="card mb-3">
+                    <div class="card-block">                            
+						<div class="row">
+							<div class="col-sm-11">
+								<h5 class="pull-left">{{ currentReportName }} Summary: {{ currentAccount }} </h5>
+							</div>
+							<div class="col-sm-1" *ngIf="!isShowAccountSummery" >
+								<a (click)="isShowAccountSummery = true" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-plus"></i></a>
+							</div>
+							<div class="col-sm-1" *ngIf="isShowAccountSummery" >
+								<a (click)="isShowAccountSummery = false" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-minus"></i></a>
+							</div>
+						</div>                        					
+                            <div class="table-responsive" *ngIf="isShowAccountSummery" >
+								<br>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Accounts</th>
+                                            <th>Tagged</th>
+                                            <th>Pending to tag</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of accountSummeryList">
+                                            <td>{{item.Accounts}}</td>
+                                            <td>{{item.Tagged | number}}</td>
+                                            <td>{{item.PendingToTag | number}}</td>
+                                            <td>{{item.Total| number }}</td>                                            
+                                        </tr>
+                                    </tbody>
+                                </table>                        
+					</div>
+				</div>
+                </div>
+            </div>
+		</div>    
+	<div class="row" >
+		<div class="col col-sm-12">
+			<div class="card mb-3">
+				<div class="card-block">
+					<div class="row">
+						<div class="col-sm-4">
+							<h5 class="pull-left">{{ currentReportName }}: {{ currentAccount }}</h5>
+						</div>
+						<div class="col-sm-2">
+							<input type="text" name="SearchAccountReport" 
+								id="SearchAccountReport" 
+								[(ngModel)]="searchAccountReport" 
+								class="form-control" placeholder="Search...">
+						</div>
+						<div class="col-sm-2">
+							<button type="button" (click)="searchReport()" class="btn btn-info btn-sm">Search</button>							
+						</div>
+						<div class="col-sm-1">
+							<button (click)="callMethod('excel')" 
+								class="btn btn-info btn-sm">EXCEL</button>
+						</div>
+						<div class="col-sm-2" *ngIf="true == false">
+							No of Records:
+							<select class="form-control" name="paginationModelCurrentPerPage"                                    
+								id="paginationModelCurrentPerPage"                                     
+								[(ngModel)]="paginationModel.PerPage"
+								(change)="getAccountsDetails()">
+								<option value="5">5</option>
+								<option value="10">10</option>
+								<option value="20">20</option>
+								<option value="50">50</option>
+								<option value="100">100</option>
+							</select>
+						</div>
+						<div class="col-sm-1" *ngIf="true==false">
+							<button (click)="callMethod('pdf')" 
+								class="btn btn-info btn-sm">PDF</button>
+						</div>
+					</div>										
+					<div class="table-responsive" 
+						style="background-color: #FFF;">
+						<table class="table table-bordered" style="background-color: #fff;">
+							<thead>
+								<tr>
+									<th>Sr No</th>
+									<ng-container *ngIf="currentReport == 'details'">
+										<th>User</th>
+										<th>Territory_Code</th>
+										<th>Account Type</th>
+										<th>Importance</th>
+										<th>No. of Architects in firm</th>
+										<th>Projects Handled by the Firm</th>
+										<th>Firm Name</th>
+										<th>Address</th>
+										<th>Geo Tagged(Yes/No)</th>
+										<th></th>
+									</ng-container>
+									<ng-container *ngIf="currentReport == 'performance'">
+										<th>User</th>
+										<th>Territory_Code</th>
+										<th>Type</th>
+										<th>Importance</th>
+										<th>Firm Name</th>
+										<th>No. of Architects in firm</th>
+										<th>Projects Handled by the Firm</th>
+										<th>Address</th>
+										<th>Geo Tagged(Yes/No)</th>
+										<th>Visit This Month</th>
+										<th>YTD Visits</th>
+										<th>Total Projects Value</th>
+										<th>Enquiry Value</th>
+										<th>Pipeline Value</th>
+										<th>Conversion Value</th>
+										<th>Order Lost Value</th>
+										<th>Registration Date</th>
+										<th>Last Modified Date</th>
+										<th></th>            
+									</ng-container>									
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let rowItem of accountsModelList;let idx = index;">
+									<ng-container *ngIf="currentReport == 'details'">
+										<td>{{ srNo + idx + 1 }}</td>
+										<td>{{  rowItem[0] || '-' }}</td>
+										<td>{{  rowItem[1] || '-' }}</td>
+										<td>{{  rowItem[2] || '-' }}</td>
+										<td>{{  rowItem[3] || '-'}}</td>
+										<td>{{  rowItem[4] || '-' }}</td>
+										<td>{{  rowItem[5] || '-' }}</td>																		
+										<td>{{  rowItem[6] || '-' }}</td>
+										<td>{{  rowItem[7] || '-' }}</td>
+										<td>{{  rowItem[8] || '-' }}</td>
+										<td>
+											<button class="btn btn-info" (click)="getClients(rowItem);open(content)">Get Clients</button>
+										</td>
+									</ng-container>	
+									
+									<ng-container *ngIf="currentReport == 'performance'">
+										<td>{{ srNo + idx + 1 }}</td>
+										<td>{{  rowItem[0] || '-' }}</td>
+										<td>{{  rowItem[1] || '-' }}</td>
+										<td>{{  rowItem[2] || '-' }}</td>
+										<td>{{  rowItem[3] || '-'}}</td>
+										<td>{{  rowItem[4] || '-' }}</td>
+										<td>{{  rowItem[5] || '-' }}</td>																		
+										<td>{{  rowItem[6] || '-' }}</td>
+										<td>{{  rowItem[7] || '-' }}</td>
+										<td>{{  rowItem[8] || '-' }}</td>
+										<td>{{  rowItem[9] || '-' }}</td>
+										<td>{{  rowItem[10] || '-' }}</td>
+										<td>{{  rowItem[11] || '-' }}</td>
+										<td>{{  rowItem[12] || '-' }}</td>
+										<td>{{  rowItem[13] || '-' }}</td>
+										<td>{{  rowItem[14] || '-' }}</td>
+										<td>{{  rowItem[15] || '-' }}</td>
+										<td>{{  rowItem[16] || '-' }}</td>
+										<td>{{  rowItem[17] || '-' }}</td>
+										<td>
+											<button class="btn btn-info" (click)="getClients(rowItem);open(content)">Get Clients</button>
+										</td>
+									</ng-container>
+								</tr>		
+
+
+								<!-- <tr *ngFor="let rowItem of accountsModelList;let idx = index;">
+									<td>{{ srNo + idx + 1 }}</td>
+									<td>{{  rowItem[0] || '-' }}</td>
+									<td>{{  rowItem[1] || '-' }}</td>
+									<td>{{  rowItem[2] || '-' }}</td>
+									<td>{{  rowItem[3] || '-'}}</td>
+									<td>{{  rowItem[4] || '-' }}</td>
+									<td>{{  rowItem[5] || '-' }}</td>																		
+									<td>{{  rowItem[6] || '-' }}</td>
+									<td>{{  rowItem[7] || '-' }}</td>
+									<td>{{  rowItem[8] || '-' }}</td>
+									<ng-container *ngIf="currentReport == 'performance'">
+										<td>{{  rowItem[9] || '-' }}</td>
+										<td>{{  rowItem[10] || '-' }}</td>
+										<td>{{  rowItem[11] || '-' }}</td>
+										<td>{{  rowItem[12] || '-' }}</td>
+										<td>{{  rowItem[13] || '-' }}</td>
+										<td>{{  rowItem[14] || '-' }}</td>
+										<td>{{  rowItem[15] || '-' }}</td>
+										<td>{{  rowItem[16] || '-' }}</td>
+										<td>{{  rowItem[17] || '-' }}</td>
+										<td>{{  rowItem[18] || '-' }}</td>
+									</ng-container>									
+									<td>
+										<button class="btn btn-info" (click)="getClients(rowItem);open(content)">Get Clients</button>
+									</td>
+								</tr> -->
+							</tbody>
+						</table>
+						<ngb-pagination  [(collectionSize)]="paginationModel.TotalRecords" (pageChange)="changePage($event)" [(page)]="paginationModel.CurrentPage" [maxSize]="paginationModel.PerPage" [rotate]="true" [ellipses]="false" [boundaryLinks]="true" size="sm"></ngb-pagination>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss">		
+	<div class="modal-header">
+			<h4 class="modal-title">Clients Details</h4>
+			<button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+		<div class="modal-body">        
+			<div class="table-responsive">
+				<h3 *ngIf="clientsDetailsModelList.length < 1">
+					No Details Found
+				</h3>
+				<table class="table table-bordered" *ngIf="clientsDetailsModelList.length >= 1">
+				<thead>
+					<tr>
+						<th class="text-center">Designation</th>  	  	  	  
+						<th class="text-center">Client Name</th>
+						<th class="text-center">Contact No.</th>
+						<th class="text-center">Email Id</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let item of clientsDetailsModelList">
+						<td>{{ item.Designation }}</td>
+						<td>{{ item.ClientName }}</td>
+						<td>{{ item.ContactNo }}</td>
+						<td>{{ item.EmailId }}</td>
+					</tr>					
+				</tbody>
+			</table>
+			</div>			
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-secondary" (click)="c('Close click')">Close</button>
+		</div>		
+</ng-template>
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '0px' }"></ngx-loading>

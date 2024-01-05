@@ -1,0 +1,75 @@
+<div [@routerTransition]>
+	<app-page-header [heading]="'Segmentwise Report'"
+		[icon]="'fa-file-text-o'"></app-page-header>		
+	<div class="row">
+		<div class="col col-sm-12">
+			<div class="card mb-3">				
+				<div class="card-block">
+					<div class="row">
+						<div class="col-sm-6">
+							<h5>Segmentwise Report</h5>
+						</div>
+						<div class="col-sm-4">
+							<input type="text" name="searchSegmentWiseReport" id="searchSegmentWiseReport" [(ngModel)]="searchSegmentWiseReport" class="form-control" placeholder="Search...">
+						</div>
+						<div class="col-sm-1">
+							<button (click)="callMethod('excel')" 
+								class="btn btn-info btn-sm">EXCEL</button>
+						</div>
+						<div class="col-sm-1">
+							<button (click)="callMethod('pdf')" 
+								class="btn btn-info btn-sm">PDF</button>
+						</div>
+					</div>					
+				</div>
+				<div class="table-responsive" style="background-color: #FFF;">
+					<table class="table table-bordered">
+						<thead>
+							<tr>								
+								<th (click)="sort('SrNo')" rowspan="2" class="text-center">Sr <br>No &nbsp;<span class="fa fa-sort" *ngIf="key =='SrNo'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+								<th *ngIf="currentUserRole == 'Administrator'" (click)="sort('Zone')" rowspan="2" class="text-center">Zone &nbsp;<span class="fa fa-sort" *ngIf="key =='Zone'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+								<th *ngIf="currentUserRole != 'Administrator'" (click)="sort('EmployeeName')" rowspan="2" class="text-center">Zone &nbsp;<span class="fa fa-sort" *ngIf="key =='EmployeeName'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+								<th colspan="2" class="text-center">Residential</th>
+								<th colspan="2" class="text-center">Government</th>
+								<th colspan="2" class="text-center">Hospitality</th>
+								<th colspan="2" class="text-center">Commercial</th>
+							</tr>
+							<tr>								
+								<th (click)="sort('ResidentialNo')" class="text-center">No &nbsp;<span class="fa fa-sort" *ngIf="key =='ResidentialNo'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+								<th (click)="sort('ResidentialValue')" class="text-center">Value &nbsp;<span class="fa fa-sort" *ngIf="key =='ResidentialValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+								<th (click)="sort('GovernmentNo')" class="text-center">No &nbsp;<span class="fa fa-sort" *ngIf="key =='GovernmentNo'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+								<th (click)="sort('GovernmentValue')" class="text-center">Value &nbsp;<span class="fa fa-sort" *ngIf="key =='GovernmentValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+								<th (click)="sort('HospitalityNo')" class="text-center">No &nbsp;<span class="fa fa-sort" *ngIf="key =='HospitalityNo'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+								<th (click)="sort('HospitalityValue')" class="text-center">Value &nbsp;<span class="fa fa-sort" *ngIf="key =='HospitalityValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+								<th (click)="sort('CommercialNo')" class="text-center">No &nbsp;<span class="fa fa-sort" *ngIf="key =='CommercialNo'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+								<th (click)="sort('CommercialValue')" class="text-center">Value &nbsp;<span class="fa fa-sort" *ngIf="key =='CommercialValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+							</tr>
+						</thead>
+						<tbody>																   
+							<tr *ngFor="let item of segmentWiseReportModelList | orderBy: { key : reverse }">
+								<td class="text-center">{{item.SrNo}}</td>
+								<td *ngIf="item.Zone" class="text-center">{{item.Zone}}</td>	
+								<td *ngIf="item.EmployeeName" class="text-center">{{item.EmployeeName}}</td>	
+								<td class="text-center">{{item.ResidentialNo}}</td>
+								<td class="text-right">{{item.ResidentialValue }}</td>
+								<td class="text-center">{{item.GovernmentNo}}</td>
+								<td class="text-right">{{item.GovernmentValue }}</td>
+								<td class="text-center">{{item.HospitalityNo}}</td>
+								<td class="text-right">{{item.HospitalityValue }}</td>
+								<td class="text-center">{{item.CommercialNo}}</td>
+								<td class="text-right">{{item.CommercialValue }}</td>
+							</tr>
+						</tbody>
+					</table>
+					<ngb-pagination [collectionSize]="paginationModel.TotalRecords" 
+                                        (pageChange)="changePage($event)" 
+                                        [(page)]="paginationModel.CurrentPage" 
+                                        [maxSize]="paginationModel.PerPage" 
+                                        [rotate]="true" [ellipses]="false" 
+                                        [boundaryLinks]="true" size="sm"></ngb-pagination>
+				</div>								
+			</div>
+		</div>
+	</div>
+</div>
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '0px' }"></ngx-loading>

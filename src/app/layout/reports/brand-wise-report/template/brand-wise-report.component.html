@@ -1,0 +1,106 @@
+<div [@routerTransition]>
+    <app-page-header [heading]="currentReport" [icon]="'fa-file-text-o'"></app-page-header>
+    <div class="row">
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-block">
+                    <a class="col-sm-2 btn bnt-link btn-border btn-sm" *ngFor="let item of brandList" [ngClass]="{'btn-info' : currentBrand == item}" routerLink="/brand-wise-report" [routerLinkActive]="['router-link-active']" [queryParams]="{ type: item }">{{ item }}</a>
+                </div>
+            </div>
+        </div>
+    </div>    
+    <div class="row">
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h5>BrandWise Report</h5>
+                        </div>
+                        <div class="col-sm-4">
+                            <input type="text" id="searchBrandwiseReport" name="searchBrandwiseReport" class="form-control" [(ngModel)]="searchBrandwiseReport" placeholder="Search...">
+                        </div>
+                        <div class="col-sm-1">
+                            <button (click)="callMethod('excel')" class="btn btn-info btn-sm">EXCEL</button>
+                        </div>
+                        <div class="col-sm-1">
+                            <button (click)="callMethod('pdf')" class="btn btn-info btn-sm">PDF</button>
+                        </div>
+                    </div>                             
+                    <div class="table-responsive" style="background-color: #FFF;">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th (click)="sort('SrNo')" class="text-center">Sr No&nbsp;<span class="fa fa-sort" *ngIf="key =='SrNo'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th *ngIf="currentUserRole == 'Administrator'" (click)="sort('Zone')" class="text-center">Zone&nbsp;<span class="fa fa-sort" *ngIf="key =='Zone'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th *ngIf="currentUserRole != 'Administrator'" (click)="sort('EmployeeName')" class="text-center">Employee Name &nbsp;<span class="fa fa-sort" *ngIf="key =='EmployeeName'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <ng-container *ngIf="currentBrand == 'Hindware'">
+                                        <th (click)="sort('VirtualState')" class="text-center">Virtual State &nbsp;<span class="fa fa-sort" *ngIf="key =='VirtualState'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('HWItalianValue')" class="text-center">HW Italian &nbsp;<span class="fa fa-sort" *ngIf="key =='HWItalianValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('HWFaucetsValue')" class="text-center">HW Faucets &nbsp;<span class="fa fa-sort" *ngIf="key =='HWFaucetsValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('PVCCisternsValue')" class="text-center">PVC Cisterns &nbsp;<span class="fa fa-sort" *ngIf="key =='PVCCisternsValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('ConcealoValue')" class="text-center">Concealo&nbsp;<span class="fa fa-sort" *ngIf="key =='ConcealoValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>                                    
+									</ng-container>
+									<ng-container *ngIf="currentBrand == 'Lifestyle'">
+                                        <th (click)="sort('QueoSwValue')" class="text-center">Queo SW &nbsp;<span class="fa fa-sort" *ngIf="key =='QueoSwValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('QueoFaucetsValue')" class="text-center">Queo Faucets &nbsp;<span class="fa fa-sort" *ngIf="key =='QueoFaucetsValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('AmoreValue')" class="text-center">Amore &nbsp;<span class="fa fa-sort" *ngIf="key =='AmoreValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									</ng-container>
+									<ng-container *ngIf="currentBrand == 'Benelave'">
+                                        <th (click)="sort('BenelaveSwValue')" class="text-center">Benelave SW &nbsp;<span class="fa fa-sort" *ngIf="key =='BenelaveSwValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('BenelaveFaucetsValue')" class="text-center">Benelave Faucets &nbsp;<span class="fa fa-sort" *ngIf="key =='BenelaveFaucetsValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    </ng-container>
+                                    <th (click)="sort('HotValue')" class="text-center">Hot &nbsp;<span class="fa fa-sort" *ngIf="key =='HotValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span>
+                                    </th>
+                                    <th (click)="sort('WarmValue')" class="text-center">Warm &nbsp;<span class="fa fa-sort" *ngIf="key =='WarmValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span>
+                                    </th>
+                                    <th (click)="sort('ColdValue')" class="text-center">Cold &nbsp;<span class="fa fa-sort" *ngIf="key =='ColdValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span>
+                                    </th>
+                                    <th (click)="sort('BudgetaryValue')" class="text-center">Budgetary &nbsp;<span class="fa fa-sort" *ngIf="key =='BudgetaryValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span>
+                                    </th>
+                                    <th (click)="sort('TotalValue')" class="text-center">Total Value&nbsp;<span class="fa fa-sort" *ngIf="key =='TotalValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of brandWiseReportModelList | orderBy: { key : reverse }">
+                                    <td class="text-center">{{item.SrNo}}</td>
+                                    <td *ngIf="item.Zone" class="text-center">{{item.Zone}}</td>
+                                    <td *ngIf="item.EmployeeName" class="text-center">{{item.EmployeeName}}</td>
+                                    <ng-container *ngIf="currentBrand == 'Hindware'">
+                                        <td class="text-center">{{item.VirtualState}}</td>
+                                        <td class="text-right">{{item.HWItalianValue }}</td>
+                                        <td class="text-right">{{item.HWFaucetsValue }}</td>
+                                        <td class="text-right">{{item.PVCCisternsValue }}</td>
+                                        <td class="text-right">{{item.ConcealoValue }}</td>
+                                    </ng-container>
+                                    <ng-container *ngIf="currentBrand == 'Lifestyle'">
+                                        <td class="text-right">{{item.QueoSwValue }}</td>
+                                        <td class="text-right">{{item.QueoFaucetsValue }}</td>
+                                        <td class="text-right">{{item.AmoreValue }}</td>
+                                    </ng-container>
+                                    <ng-container *ngIf="currentBrand == 'Benelave'">
+                                        <td class="text-right">{{item.BenelaveSwValue }}</td>
+                                        <td class="text-right">{{item.BenelaveFaucetsValue }}</td>
+                                    </ng-container>
+                                    <td class="text-right">{{item.HotValue }}</td>
+                                    <td class="text-right">{{item.WarmValue }}</td>
+                                    <td class="text-right">{{item.ColdValue }}</td>
+                                    <td class="text-right">{{item.BudgetaryValue }}</td>
+                                    <td class="text-right">{{item.TotalValue }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <ngb-pagination [collectionSize]="paginationModel.TotalRecords" 
+                                        (pageChange)="changePage($event)" 
+                                        [(page)]="paginationModel.CurrentPage" 
+                                        [maxSize]="paginationModel.PerPage" 
+                                        [rotate]="true" [ellipses]="false" 
+                                        [boundaryLinks]="true" size="sm"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '0px' }"></ngx-loading>

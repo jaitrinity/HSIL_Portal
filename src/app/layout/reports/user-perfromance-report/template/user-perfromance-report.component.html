@@ -1,0 +1,133 @@
+<div [@routerTransition]>
+	<app-page-header [heading]="currentReport" [icon]="'fa-file-text-o'"></app-page-header>	
+	<div class="row" *ngIf="brandList && brandList.length > 0">
+		<div class="col col-sm-12">
+			<div class="card mb-3">
+				<div class="card-block">
+					<a class="col-sm-2 btn bnt-link btn-border btn-sm"
+						*ngFor="let item of brandList"
+						[ngClass]="{'btn-info' : currentType == item}"
+						routerLink="/user-performance-report"
+						[routerLinkActive]="['router-link-active']"
+						[queryParams]="{ type: item }">{{ item }}</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row" *ngIf="currentType">
+		<div class="col col-sm-12">
+			<div class="card mb-3">
+				<div class="card-block">
+					<div class="row">
+							<div class="col-lg-5" *ngIf="userList && userList.length > 0">
+							<fieldset class="form-group">								
+								<select class="form-control" [(ngModel)]="currentTypeUser"
+									name="currentTypeUser" id="currentTypeUser">
+									<option value="-1">Select {{ currentType }} User</option>
+									<option *ngFor="let item of userList" value="{{ item.Id }}">{{ item.Name }}</option>
+								</select>
+							</fieldset>
+						</div>
+						<div class="col-lg-5" *ngIf="financialYearList &&  financialYearList.length > 0">
+							<fieldset class="form-group">								
+								<select class="form-control" name="currentFinancialYear" 
+									id="currentFinancialYear"  [(ngModel)]="currentFinancialYear">
+									<option value="-1">Select {{ currentType }} Financial Year</option>
+									<option *ngFor="let item of financialYearList" value="{{ item.Year }}">{{ item.DisplayYear  }}</option>
+								</select>
+							</fieldset>
+						</div>
+						<div class="col-lg-2">							
+							<button *ngIf="currentTypeUser != '-1' && currentFinancialYear != '-1' "
+								class="btn btn-info btn-md" 
+								(click)="getUserPerfromanceReport();">Get Report</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col col-sm-12">
+			<div class="card mb-3">
+				<div class="card-block">
+					<div class="row">
+						<div class="col-sm-6">
+							<h5>User Performance Report : {{ userPerformanceReportModelList[0]?.Username }}</h5>
+						</div>
+						<div class="col-sm-4">							
+						</div>
+						<div class="col-sm-1">
+							<button (click)="callMethod('excel')" 
+								class="btn btn-info btn-sm">EXCEL</button>
+						</div>
+						<div class="col-sm-1">
+							<button (click)="callMethod('pdf')" 
+								class="btn btn-info btn-sm">PDF</button>
+						</div>
+					</div>									
+					<div class="table-responsive" style="background-color: #FFF;">
+						<table class="table table-bordered">
+							<thead>
+								<tr>													
+									<th rowspan="3" class="text-center">Month &nbsp;<span class="fa fa-sort" *ngIf="key =='Month'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th rowspan="2" colspan="2" rowspan="2" class="text-center">Opening
+										<br>
+										Pipeline</th>
+									<th rowspan="2" colspan="2" class="text-center">New <br>
+										Pipeline</th>
+									<th rowspan="2" colspan="2" class="text-center">From Enquiry</th>
+									<th colspan="4" class="text-center">Conversion</th>
+									<th rowspan="2" colspan="2" class="text-center">Lost</th>
+									<th rowspan="3" class="text-center">Cumm.<br>
+										Balance &nbsp;<span class="fa fa-sort" *ngIf="key =='PipelineBankValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th rowspan="3" class="text-center">Pipeline
+										<br>
+										Bank &nbsp;<span class="fa fa-sort" *ngIf="key =='CummBalanceValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+								</tr>
+								<tr>									
+									<th class="text-center" colspan="2">From New</th>
+									<th class="text-center" colspan="2">From Old</th>
+								</tr>
+								<tr>
+									<th class="text-center">No&nbsp;<span class="fa fa-sort" *ngIf="key =='OpeningPipelineNo'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th class="text-center">Value&nbsp;<span class="fa fa-sort" *ngIf="key =='OpeningPipelineValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th class="text-center">No&nbsp;<span class="fa fa-sort" *ngIf="key =='NewPipelineNo'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th class="text-center">Value&nbsp;<span class="fa fa-sort" *ngIf="key =='NewPipelineValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th class="text-center">No&nbsp;<span class="fa fa-sort" *ngIf="key =='EnquiryNo'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th class="text-center">Value&nbsp;<span class="fa fa-sort" *ngIf="key =='EnquiryValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th class="text-center">No&nbsp;<span class="fa fa-sort" *ngIf="key =='FromNewNo'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th class="text-center">Value&nbsp;<span class="fa fa-sort" *ngIf="key =='FromNewValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th class="text-center">No&nbsp;<span class="fa fa-sort" *ngIf="key =='FromOldNo'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th class="text-center">Value&nbsp;<span class="fa fa-sort" *ngIf="key =='FromOldValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th class="text-center">No&nbsp;<span class="fa fa-sort" *ngIf="key =='LostNo'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th class="text-center">Value&nbsp;<span class="fa fa-sort" *ngIf="key =='LostValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+								</tr>
+							</thead>
+							<tbody>								    
+								<tr *ngFor="let item of userPerformanceReportModelList ">
+									<td class="text-center">{{item.Month}}</td>																		
+									<td class="text-center">{{item.OpeningPipelineNo}}</td>
+									<td class="text-right">{{item.OpeningPipelineValue}}</td>
+									<td class="text-center">{{item.NewPipelineNo}}</td>
+									<td class="text-right">{{item.NewPipelineValue}}</td>									
+									<td class="text-center">{{item.EnquiryNo}}</td>
+									<td class="text-right">{{item.EnquiryValue}}</td>
+									<td class="text-center">{{item.FromNewNo}}</td>
+									<td class="text-right">{{item.FromNewValue}}</td>
+									<td class="text-center">{{item.FromOldNo}}</td>
+									<td class="text-right">{{item.FromOldValue}}</td>
+									<td class="text-center">{{item.LostNo}}</td>
+									<td class="text-right">{{item.LostValue}}</td>
+									<td class="text-right">{{item.PipelineBankValue}}</td>
+									<td class="text-right">{{item.CummBalanceValue}}</td>									
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '0px' }"></ngx-loading>

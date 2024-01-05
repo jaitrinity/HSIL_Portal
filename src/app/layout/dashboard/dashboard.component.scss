@@ -1,0 +1,95 @@
+.classWithPad { 
+	margin:10px; 
+	padding:10px;
+	background-color: blue; 
+}
+.modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1050;
+    overflow: hidden;
+    -webkit-overflow-scrolling: touch;
+    outline: 0;
+}
+ 
+.fade {
+    opacity: 0;
+    -webkit-transition: opacity .15s linear;
+    -o-transition: opacity .15s linear;
+    transition: opacity .15s linear;
+}
+ 
+.fade.in {
+    opacity: 1;
+}
+ 
+.modal-dialog {
+    position: relative;
+    width: auto;
+    margin: 10px;
+}
+ 
+.modal.in .modal-dialog {
+    -webkit-transform: translate(0,0);
+    -ms-transform: translate(0,0);
+    -o-transform: translate(0,0);
+    transform: translate(0,0);
+}
+ 
+.modal.fade .modal-dialog {
+    -webkit-transition: -webkit-transform .3s ease-out;
+    -o-transition: -o-transform .3s ease-out;
+    transition: transform .3s ease-out;
+    -webkit-transform: translate(0,-25%);
+    -ms-transform: translate(0,-25%);
+    -o-transform: translate(0,-25%);
+    transform: translate(0,-25%);
+}
+ 
+@media (min-width: 768px) {
+    .modal-dialog {
+        width: 600px;
+        margin: 30px auto;
+    }
+}
+.dashboard-count-box:hover{
+    box-shadow: 2px 9px 9px #ccc;
+    cursor: pointer;
+}
+.dashboard-icon{
+    display:inline-block;
+    font-size: 30px;
+    line-height: 60px;    
+    color:white;    
+    height: 60px;
+    text-align: center;
+    vertical-align: bottom;
+}
+.dashboard-text {
+    display:inline-block;
+    line-height: 28px;
+    font-weight: 600;
+    color:#000;    
+    background: #ffffff;
+    height: 60px;
+    text-align: center;
+    vertical-align: bottom;
+}
+.icon-1{
+    background-color: #053877;
+}
+.icon-2{
+    background-color: #FF8762;
+}
+.icon-3{
+    background-color: #56BDDE;
+}
+.icon-4{
+    background-color: #B198DC;
+}
+.icon-5{
+    background-color: #FFC95F;
+}

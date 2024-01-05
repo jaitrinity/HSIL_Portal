@@ -1,0 +1,131 @@
+<div [@routerTransition]>
+	<app-page-header [heading]="currentReportName"
+		[icon]="'fa-file-text-o'"></app-page-header>
+	<div class="row">
+		<div class="col col-sm-12">
+			<div class="card mb-3">
+				<div class="card-block">
+					<div class="row">
+						<div class="col-sm-6">
+							<a class="col-sm-2 btn bnt-link btn-border btn-sm" 						
+							*ngFor="let item of reportTypeList"
+							[ngClass]="{'btn-info' : currentReportType == item }"
+							(click)="changeReportType(item)">{{ item }}</a>
+					</div>					
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>		
+	<div class="row">
+		<div class="col col-sm-12">
+			<div class="card mb-3">
+				<div class="card-block">						
+					<div class="row">
+						<div class="col-sm-10">
+							<h5>{{ currentReportName }} Summary </h5>
+						</div>
+						<div class="col-sm-2">
+							<a *ngIf="!showUserSummary"
+								class="btn btn-link btn-sm pull-right btn-border" 
+								(click)="showUserSummary = true"><i class="fa fa-plus"></i></a> 
+							<a *ngIf="showUserSummary" class="btn btn-link btn-sm btn-border pull-right"
+								(click)="showUserSummary = false"><i
+								class="fa fa-minus"></i></a>
+						</div>
+					</div>
+
+						<div class="table-responsive" *ngIf="showUserSummary">
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<th class="text-center">Role</th>
+										<th class="text-center">{{ currentReportType }} Count</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr *ngFor="let item of userSummeryModel.RoleWiseCountModelList">
+										<td>{{ item.Role }}</td>
+										<td class="text-center">{{ item.InActiveCount }}</td>
+									</tr>								
+								</tbody>
+								<tfoot>
+									<tr>
+										<th class="text-center">Total</th>
+										<td class="text-center">{{ userSummeryModel.TotalCount }}</td>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+				</div>
+			</div>
+		</div>
+	</div>	
+	<div class="row">
+		<div class="col col-sm-12">
+			<div class="card mb-3">
+				<div class="card-block">
+					<div class="row">
+						<div class="col-sm-5"><h5>{{ currentReportName }} User Report</h5></div>
+						<div class="col-sm-4">
+							<input type="text" id="searchUserReportReport" 
+							name="searchUserReportReport" placeholder="Search..."
+							class="form-control" [(ngModel)]="searchUserReportReport">
+						</div>
+						<div class="col-sm-1">
+								<input type="number" (change)="getUserDetails();"
+								[(ngModel)]="noOfDays" placeholder="Enter No of Days."
+								class="form-control">
+						</div>
+						<div class="col-sm-1">
+							<button (click)="callMethod('excel')" 
+								class="btn btn-info btn-sm">EXCEL</button>
+						</div>
+						<div class="col-sm-1">
+							<button (click)="callMethod('pdf')" 
+								class="btn btn-info btn-sm">PDF</button>
+						</div>						
+					</div>															
+					<div class="table-responsive">
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th (click)="sort('SrNo')" class="text-center">Sr No &nbsp;<span class="fa fa-sort" *ngIf="key =='SrNo'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('Name')" class="text-center">Name &nbsp;<span class="fa fa-sort" *ngIf="key =='Name'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('Role')" class="text-center">Role &nbsp;<span class="fa fa-sort" *ngIf="key =='Role'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('Region')" class="text-center">Region &nbsp;<span class="fa fa-sort" *ngIf="key =='Region'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('RmName')" class="text-center">Rm Name &nbsp;<span class="fa fa-sort" *ngIf="key =='RmName'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th *ngIf="currentReportType == 'Inactive'" (click)="sort('ResignationRemarks')"
+										class="text-center">Resignation<br>Remarks &nbsp;<span class="fa fa-sort" *ngIf="key =='ResignationRemarks'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th *ngIf="currentReportType == 'Inactive'" (click)="sort('ResignationDate')"
+										class="text-center">Resignation<br>Date &nbsp;<span class="fa fa-sort" *ngIf="key =='ResignationDate'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let item of userDataModelList | orderBy: { key : reverse }">
+									<td class="text-center">{{item.SrNo}}</td>
+									<td class="text-center">{{item.Name}}</td>
+									<td class="text-center">{{item.Role}}</td>
+									<td class="text-center">{{item.Region}}</td>
+									<td class="text-center">{{item.RmName}}</td>
+									<td *ngIf="currentReportType == 'Inactive'"
+										class="text-center">{{item.ResignationRemarks}}</td>
+									<td *ngIf="currentReportType == 'Inactive'"
+										class="text-center">{{item.ResignationDate}}</td>										
+
+								</tr>
+							</tbody>							
+						</table>
+						<ngb-pagination [collectionSize]="paginationModel.TotalRecords" 
+                                        (pageChange)="changePage($event)" 
+                                        [(page)]="paginationModel.CurrentPage" 
+                                        [maxSize]="paginationModel.PerPage" 
+                                        [rotate]="true" [ellipses]="false" 
+                                        [boundaryLinks]="true" size="sm"></ngb-pagination>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '0px' }"></ngx-loading>

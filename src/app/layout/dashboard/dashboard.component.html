@@ -1,0 +1,173 @@
+<div [@routerTransition]>
+	<app-page-header [heading]="'Dashboard'" [icon]="'fa-file-text-o'"></app-page-header>	
+	<div class="container">
+			<div class="row text-center">
+					<div class="col col-sm-7">
+						<div class="row">
+							<div class="col col-md-4">
+								<div class="container">
+									<div class="row dashboard-count-box" (click)="openInformationModel('Account');open(content)">
+										<div class="col-sm-4 dashboard-icon icon-1">
+											<span><i class="fa fa-address-book"></i></span>
+										</div>
+										<div class="col-sm-8 dashboard-text">
+											<span>ACCOUNTS <br>{{ dashboarDataModel.AccountsNoCount || '-' }}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col col-md-4">
+								<div class="container">
+									<div class="row dashboard-count-box" (click)="openInformationModel('Enquiry');open(content)">
+										<div class="col-sm-4 dashboard-icon icon-2">
+											<span><i class="fa fa-file-text-o"></i></span> 
+										</div>
+										<div class="col-sm-8 dashboard-text">
+											<span>ENQUIRY <br>{{ dashboarDataModel.EnquiryNoCount || '-' }}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col col-md-4">
+								<div class="container">
+									<div class="row dashboard-count-box" (click)="openInformationModel('Pipeline');open(content)">
+										<div class="col-sm-4 dashboard-icon icon-3">
+											<span><i class="fa fa-handshake-o "></i></span>
+										</div>
+										<div class="col-sm-8 dashboard-text">
+											<span>PIPELINE <br>{{ dashboarDataModel.PipelineNoCount || '-' }}</span>
+										</div>
+									</div>
+								</div>					
+							</div>
+						</div>
+					</div>
+					<div class="col col-sm-5">
+						<div class="row">
+							<div class="col col-md-6">					
+								<div class="container">
+										<div class="row dashboard-count-box" (click)="openInformationModel('Conversion');open(content)">
+											<div class="col-sm-4 dashboard-icon icon-4">
+												<span><i class="fa fa-inr"></i></span>
+											</div>
+											<div class="col-sm-8 dashboard-text">
+												<span>CONVERSION <br>{{ dashboarDataModel.ConversionNoCount || '-' }}</span>
+											</div>
+										</div>
+								</div>											
+							</div>
+							<div class="col col-md-6">
+								<div class="container">
+									<div class="row dashboard-count-box" (click)="openInformationModel('Order Lost');open(content)">
+										<div class="col-sm-4 dashboard-icon icon-5">
+											<span><i class="fa fa-frown-o"></i></span>
+										</div>
+										<div class="col-sm-8 dashboard-text">
+											<span>ORDER LOST  <br>{{ dashboarDataModel.OrderLostNoCount || '-' }}</span>
+										</div>
+									</div>
+								</div>										
+							</div>
+						</div>
+					</div>		
+				</div>
+	</div><br>
+	<div class="container">
+		<div class="row">
+				<div class="col col-sm-6" *ngIf="!checkArrayContainAllZero(dashboarDataModel.DoughnutChartData)">
+						<div class="card mb-3">
+							<div class="card-block">													
+							<h5 class="pull-left">Visits</h5>							
+							<canvas baseChart
+							[data]="dashboarDataModel.DoughnutChartData"
+							[labels]="dashboarDataModel.DoughnutChartLabels"
+							[chartType]="dashboarDataModel.DoughnutChartType"
+							(chartHover)="chartHovered($event)"
+							(chartClick)="chartClicked($event)"></canvas>
+							</div>
+						</div>
+					</div>					
+					<div class="col col-sm-6" *ngIf="!checkArrayContainAllZero(dashboarDataModel.PipelineFunnelData)">
+						<div class="card mb-3">
+							<div class="card-block">
+								<h5 class="pull-left">Live Pipeline</h5>		
+								<canvas baseChart height="130px" 
+								[colors]="pipelineChartColors"
+								[data]="dashboarDataModel.PipelineFunnelData" 
+								[labels]="dashboarDataModel.PipelineFunnelLabels" 
+								[legend]="dashboarDataModel.PipelineFunnelLegend" 
+								[chartType]="dashboarDataModel.PolarAreaChartType" 
+								(chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
+							</div>
+						</div>
+					</div>														
+					<div class="col col-sm-12" *ngIf="!(checkArrayContainAllZero(dashboarDataModel.BarChartConversionData) && checkArrayContainAllZero(dashboarDataModel.BarChartOrderLostData))">
+						<div class="card mb-3">
+							<div class="card-block">					
+								<h5 class="pull-left">FY Conversion vs Order Lost (In Lacs)</h5>																
+									<canvas baseChart
+										[colors]="barChartColors"
+										[datasets]="dashboarDataModel.BarChartData"
+										[labels]="dashboarDataModel.BarChartLabels"
+										[options]="dashboarDataModel.BarChartOptions"
+										[legend]="dashboarDataModel.BarChartLegend"
+										[chartType]="dashboarDataModel.BarChartType"
+										(chartHover)="chartHovered($event)"
+										(chartClick)="chartClicked($event)"></canvas>								
+								<!-- <ng-template *ngIf="checkArrayContainAllZero(dashboarDataModel.BarChartConversionData) && checkArrayContainAllZero(dashboarDataModel.BarChartOrderLostData)">
+									No Data Available
+								</ng-template> -->
+							</div>
+						</div>
+					</div>
+					<div class="col col-sm-12" *ngIf="true == false">
+						<div class="card mb-3">
+							<div class="card-block" style="border-bottom:1px solid #ccc;">
+								<h5 class="pull-left">Quick Links</h5>
+							</div>							
+							<div class="card-block">
+								<a class="btn btn-link btn-sm">Top 10 Key Accounts (PO
+									received)</a><br> <a class="btn btn-link btn-sm">Top 10
+									Projects (Hot)</a><br> <a class="btn btn-link btn-sm">Top 10
+									Projects Won</a>
+							</div>
+						</div>
+					</div>
+		</div>
+	</div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss">		
+				<div class="modal-header">
+						<h4 class="modal-title">{{ currentHeader }}</h4>
+						<button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">        
+						<div class="table-responsive">
+							<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th class="text-center" *ngFor="let item of currentDataColumnList">{{ item }}</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let item of currentDataRowList">
+									<ng-container *ngFor="let baseitem of item;let idx = index">										
+										<td class="text-left" *ngIf="idx == 0"><b>{{ baseitem }}</b></td>
+										<td class="text-right" *ngIf="idx != 0">{{ baseitem }}</td>
+									</ng-container>
+								</tr>
+								<tr *ngIf="currentHeader == 'Account Information'">
+									<th class="text-center" colspan="3" >Total</th>									
+									<td class="text-right">{{ currentValueCount }}</td>
+								</tr>
+							</tbody>
+						</table>
+						</div>			
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" (click)="c('Close click')">Close</button>
+					</div>		
+	</ng-template>
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '0px' }"></ngx-loading>

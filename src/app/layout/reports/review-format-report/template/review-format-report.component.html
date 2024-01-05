@@ -1,0 +1,333 @@
+<div [@routerTransition]>
+    <app-page-header [heading]="'Review Format Report'" [icon]="'fa-users'"></app-page-header>
+    <div class="row">
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-block">
+                    <div class="row">                        
+                        <div class="col-sm-2">
+                            <a class="btn btn-border btn-sm" 
+								routerLink="/review-format-report"
+								[routerLinkActive]="['router-link-active']"
+								[queryParams]="{ type: 'Month' }"
+								[ngClass]="{'btn-info' : currentReport == 'Month' }" >Month Wise</a>                            
+                        </div> 
+                        <div class="col-sm-2">
+                            <a class="btn btn-border btn-sm" 
+								routerLink="/review-format-report"
+								[routerLinkActive]="['router-link-active']"
+								[queryParams]="{ type: 'Week' }"
+								[ngClass]="{'btn-info' : currentReport == 'Week' }" >Week Wise</a>                           
+                        </div>                          
+                    </div>                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-sm-11" >
+                            <h5 class="pull-left">Filters</h5>
+                        </div>
+                        <div class="col-sm-1" *ngIf="!showFilters">
+                            <a class="btn btn-info btn-sm pull-right" style="color:white" (click)="showFilters = true"><i class="fa fa-plus"></i></a>
+                        </div> 
+                        <div class="col-sm-1" *ngIf="showFilters">
+                            <a class="btn btn-info btn-sm pull-right" style="color:white" (click)="showFilters = false"><i class="fa fa-minus"></i></a>
+                        </div>                                               
+                    </div>
+                    <div class="row" *ngIf="showFilters">
+                        <div class="col-sm-2">
+                            <select class="form-control" name="importance"
+                                id="importance" [(ngModel)]="importance">
+                                <option value="All">All</option>                                            
+                                <option value="Priority">Priority</option>
+                                <option value="Key Account">Key Account</option>
+                                <option value="Other Account">Other Account</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="brands"
+                                id="brands" [(ngModel)]="brands">
+                                <option value="All">All</option>
+                                <option *ngFor="let item of brandsList" value="{{ item }}">{{ item }}</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+							<select class="form-control" id="segment"
+								name="segment" [(ngModel)]="segment"
+								(change)="resetPagination()">	
+								<option value="All">All</option>
+								<option *ngFor="let item of segmentTypeList" value="{{ item }}">{{ item }}</option>
+							</select>
+                        </div>
+                        <div class="col-sm-2" *ngIf="currentReport == 'Month'">
+                            <select class="form-control" name="currentMonthName"
+                                (change)="updateLastMonth()"
+                                id="currentMonthName" [(ngModel)]="currentMonthName">                                
+                                <option *ngFor="let item of visitsMonths" value="{{ item }}">{{ item }}</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2" *ngIf="currentReport != 'Month'">                        
+                            <button class="btn btn-info" (click)="getReviewFormatReport();showCurrentWeek = false;showLastWeek = false;">Get Report</button>
+                        </div>
+                        <div class="col-sm-2" *ngIf="currentReport == 'Month'">
+                            <button class="btn btn-info" (click)="getReviewFormatReport();showCurrentWeek = false;showLastWeek = false;">Get Report</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <h5 class="pull-left">Review Format Report</h5>
+                        </div>
+                        <div class="col-sm-2" *ngIf="!showReviewFormatReport">
+                            <a (click)="getReviewFormatReport();showReviewFormatReport = true" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-plus"></i></a>
+                        </div>
+                        <div class="col-sm-2" *ngIf="showReviewFormatReport">
+                            <a (click)="showReviewFormatReport = false" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-minus"></i></a>
+                        </div>
+                    </div>
+                    <div class="table-responsive" *ngIf="showReviewFormatReport">
+                        <br>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" class="text-center">Sr No</th>
+                                    <th rowspan="2" class="text-center">Name</th>
+                                    <th rowspan="2" class="text-center">Role</th>
+                                    <th rowspan="2" class="text-center">Zone</th>
+                                    <th colspan="2" class="text-center">Hindware</th>
+                                    <th colspan="2" class="text-center">Lifestyle</th>
+                                </tr>
+                                <tr>
+                                    <th class="text-center">No</th>
+                                    <th class="text-center">Value</th>
+                                    <th class="text-center">No</th>
+                                    <th class="text-center">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let reviewFormatReportItem of reviewFormatReportModelList | paginate: { itemsPerPage: 10, currentPage: p } ;let currentReviewIdx = index;">
+                                    <td>{{ reviewReportSrNo + currentReviewIdx + 1 }}</td>
+                                    <td>{{ reviewFormatReportItem.Name }}</td>
+                                    <td>{{ reviewFormatReportItem.Role }}</td>
+                                    <td>{{ reviewFormatReportItem.Zone }}</td>
+                                    <td>{{ reviewFormatReportItem.HindwareNo || '-' }}</td>
+                                    <td class="text-right">{{ reviewFormatReportItem.HindwareValue || '-' }}</td>
+                                    <td>{{ reviewFormatReportItem.LifestyleNo || '-' }}</td>
+                                    <td class="text-right">{{ reviewFormatReportItem.LifestyleValue || '-' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-sm-7">
+                            <h5 class="pull-left" *ngIf="currentReport != 'Month'">Review Format Report : Current {{ currentReport }}</h5>
+                            <h5 class="pull-left" *ngIf="currentReport == 'Month'">Review Format Report : {{ currentMonthName }}</h5>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>No of Records:</label>
+                                </div>
+                                <div class="col-sm-6">                   
+                                    <select class="form-control" name="paginationModelCurrentPerPage"
+                                        (change)="getWeekWiseReport(1)"
+                                        id="paginationModelCurrentPerPage" [(ngModel)]="paginationModelCurrentPerPage">                                
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="25">25</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <a (click)="getExcelPDF(1)" style="color:white" class="btn btn-info btn-sm">Excel</a>
+                        </div>
+                        <div class="col-sm-1" *ngIf="!showCurrentWeek">
+                            <a (click)="getWeekWiseReport(1);showCurrentWeek = true" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-plus"></i></a>
+                        </div>
+                        <div class="col-sm-1" *ngIf="showCurrentWeek">
+                            <a (click)="showCurrentWeek = false" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-minus"></i></a>
+                        </div>
+                    </div>
+                    <div class="table-responsive" *ngIf="showCurrentWeek">
+                        <br>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Sr No</th>
+                                    <th>User Name (Sales / BD)</th>
+                                    <th>Territory Code</th>
+                                    <th>Brand</th>
+                                    <th>Importance</th>
+                                    <th>No. of calls made</th>
+                                    <th>No. of Enquiry</th>
+                                    <th>Enquiry Value(in Lacs)</th>
+                                    <th>% Change from last {{ currentReport }}(Enquiry)</th>
+                                    <th>No. of Pipeline(Hot + Warm)</th>
+                                    <th>Pipeline Value(Hot + Warm)</th>
+                                    <th>% Change from last {{ currentReport }}(Pipeline)</th>
+                                    <th>Total no. of Open Pipeline</th>
+                                    <th>Total value of open pipeline</th>
+                                    <th>% Change from last {{ currentReport }}</th>
+                                    <th>Total YTD Conversion Value (in Lacs)</th>
+                                    <th>% Change from last {{ currentReport }}</th>
+                                    <!-- <th>Billing done (Rs Lakhs) YTD</th>
+                                    <th>% Change from last {{ currentReport }}</th>                                     -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let reviewFormatReportItem of reviewFormatWeekwiseReportModelCurrentWeekList;let currentWeekIdx = index;">
+                                    <td *ngIf="currentWeekIdx != (reviewFormatWeekwiseReportModelCurrentWeekList.length - 1)">{{ currentWeekSrNo + currentWeekIdx + 1 }}</td>
+                                    <td *ngIf="currentWeekIdx == (reviewFormatWeekwiseReportModelCurrentWeekList.length - 1)" colspan="5" class="text-center"><b>Total</b></td>
+                                    <td *ngIf="currentWeekIdx != (reviewFormatWeekwiseReportModelCurrentWeekList.length - 1)">{{ reviewFormatReportItem.UserName }}</td>
+                                    <td *ngIf="currentWeekIdx != (reviewFormatWeekwiseReportModelCurrentWeekList.length - 1)">{{ reviewFormatReportItem.TerritoryCode }}</td>
+                                    <td *ngIf="currentWeekIdx != (reviewFormatWeekwiseReportModelCurrentWeekList.length - 1)">{{ reviewFormatReportItem.Brand }}</td>
+                                    <td *ngIf="currentWeekIdx != (reviewFormatWeekwiseReportModelCurrentWeekList.length - 1)">{{ reviewFormatReportItem.Importance }}</td>
+                                    <td>{{ reviewFormatReportItem.NoOfCallsMadeInTheWeek }}</td>
+                                    <td>{{ reviewFormatReportItem.NoOfEnquiryThisWeek }}</td>
+                                    <td>{{ reviewFormatReportItem.EnquiryValueThisWeek == 0 ? '0.00' : reviewFormatReportItem.EnquiryValueThisWeek }}</td>
+                                    <td>{{ reviewFormatReportItem.PercentChangeFromLastWeekEnquiry }}</td>
+
+                                    <td>{{ reviewFormatReportItem.NoOfPipelineThisWeek }}</td>
+                                    <td>{{ reviewFormatReportItem.PipelineValueThisWeek == 0 ? '0.00' : reviewFormatReportItem.PipelineValueThisWeek }}</td>
+                                    <td>{{ reviewFormatReportItem.PercentageChangeFromLastWeekPipeline }}</td>
+
+                                    <td>{{ reviewFormatReportItem.TotalNoOfOpenPipeline }}</td>
+                                    <td>{{ reviewFormatReportItem.TotalValueOfOpenPipeline == 0 ? '0.00' : reviewFormatReportItem.TotalValueOfOpenPipeline }}</td>
+                                    <td>{{ reviewFormatReportItem.PercentageChangeFromLastWeekOpenPipeline }}</td>
+
+                                    <td>{{ reviewFormatReportItem.ConversionValueYTD == 0 ? '0.00' : reviewFormatReportItem.ConversionValueYTD }}</td>
+                                    <td>{{ reviewFormatReportItem.PercentageChangeFromLastWeekConversionValueYTD }}</td>
+                                    <!-- <td>{{ reviewFormatReportItem.BillingDoneYTD }}</td>
+                                    <td>{{ reviewFormatReportItem.PercentageChangeFromLastWeekBillingDoneYTD }}</td> -->
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div *ngIf="paginationModelCurrentWeek.TotalRecords >= 0">
+                                <ngb-pagination [collectionSize]="paginationModelCurrentWeek.TotalRecords" (pageChange)="getCurrentWeekReport($event)" [(page)]="paginationModelCurrentWeek.CurrentPage" [maxSize]="paginationModelCurrentWeek.PerPage" [rotate]="true" [ellipses]="false" [boundaryLinks]="true" size="sm"></ngb-pagination>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-sm-7">
+                            <h5 class="pull-left" *ngIf="currentReport != 'Month'">Review Format Report : Last {{ currentReport }}</h5>
+                            <h5 class="pull-left" *ngIf="currentReport == 'Month'">Review Format Report : {{ lastMonthName }}</h5>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>No of Records:</label>
+                                </div>
+                                <div class="col-sm-6">                   
+                                    <select class="form-control" name="paginationModelLastPerPage"
+                                        (change)="getWeekWiseReport(0)"
+                                        id="paginationModelLastPerPage" [(ngModel)]="paginationModelLastPerPage">                                
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="25">25</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <a (click)="getExcelPDF(0)" style="color:white" class="btn btn-info btn-sm">Excel</a>
+                        </div>                        
+                        <div class="col-sm-1  pull-right" *ngIf="!showLastWeek">
+                            <a (click)="getWeekWiseReport(0);showLastWeek = true" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-plus"></i></a>
+                        </div>
+                        <div class="col-sm-1 pull-right" *ngIf="showLastWeek">
+                                <a (click)="showLastWeek = false" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-minus"></i></a>
+                        </div>
+                    </div>                    
+                    <div class="table-responsive" *ngIf="showLastWeek">
+                        <br>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Sr No</th>
+                                    <th>User Name (Sales / BD)</th>
+                                    <th>Territory Code</th>
+                                    <th>Brand </th>
+                                    <th>Importance</th>
+                                    <th>No. of calls made</th>
+                                    <th>No. of Enquiry</th>
+                                    <th>Enquiry Value (in Lacs)</th>
+                                    <th>% Change from last {{ currentReport }}(Enquiry)</th>
+                                    <th>No. of Pipeline (Hot + Warm)</th>
+                                    <th>Pipeline Value (Hot + Warm)</th>
+                                    <th>% Change from last {{ currentReport }}(Pipeline)</th>
+                                    <th>Total no. of Open Pipeline</th>
+                                    <th>Total value of open pipeline</th>
+                                    <th>% Change from last {{ currentReport }}</th>
+                                    <th>Total YTD Conversion Value (in Lacs)</th>
+                                    <th>% Change from last {{ currentReport }}</th>
+                                    <!-- <th>Billing done (Rs Lakhs) YTD</th>
+                                    <th>% Change from last {{ currentReport }}</th>                                     -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let reviewFormatReportItem of reviewFormatWeekwiseReportModelLastWeekList;let lastWeekIdx = index;">
+                                    <td *ngIf="lastWeekIdx != (reviewFormatWeekwiseReportModelLastWeekList.length - 1)">{{ lastWeekSrNo + lastWeekIdx + 1 }}</td>
+                                    <td *ngIf="lastWeekIdx == (reviewFormatWeekwiseReportModelLastWeekList.length - 1)" colspan="5" class="text-center"><b>Total</b></td>
+                                    <td *ngIf="lastWeekIdx != (reviewFormatWeekwiseReportModelLastWeekList.length - 1)">{{ reviewFormatReportItem.UserName }}</td>
+                                    <td *ngIf="lastWeekIdx != (reviewFormatWeekwiseReportModelLastWeekList.length - 1)">{{ reviewFormatReportItem.TerritoryCode }}</td>
+                                    <td *ngIf="lastWeekIdx != (reviewFormatWeekwiseReportModelLastWeekList.length - 1)">{{ reviewFormatReportItem.Brand }}</td>
+                                    <td *ngIf="lastWeekIdx != (reviewFormatWeekwiseReportModelLastWeekList.length - 1)">{{ reviewFormatReportItem.Importance }}</td>                                    
+                                    <td>{{ reviewFormatReportItem.NoOfCallsMadeInTheWeek }}</td>
+                                    <td>{{ reviewFormatReportItem.NoOfEnquiryThisWeek }}</td>
+                                    <td>{{ reviewFormatReportItem.EnquiryValueThisWeek == 0 ? '0.00' : reviewFormatReportItem.EnquiryValueThisWeek }}</td>
+                                    <td>{{ reviewFormatReportItem.PercentChangeFromLastWeekEnquiry }}</td>
+
+                                    <td>{{ reviewFormatReportItem.NoOfPipelineThisWeek }}</td>
+                                    <td>{{ reviewFormatReportItem.PipelineValueThisWeek == 0 ? '0.00' : reviewFormatReportItem.PipelineValueThisWeek }}</td>
+                                    <td>{{ reviewFormatReportItem.PercentageChangeFromLastWeekPipeline }}</td>
+
+                                    <td>{{ reviewFormatReportItem.TotalNoOfOpenPipeline }}</td>
+                                    <td>{{ reviewFormatReportItem.TotalValueOfOpenPipeline == 0 ? '0.00' : reviewFormatReportItem.TotalValueOfOpenPipeline }}</td>
+                                    <td>{{ reviewFormatReportItem.PercentageChangeFromLastWeekOpenPipeline }}</td>
+
+                                    <td>{{ reviewFormatReportItem.ConversionValueYTD == 0 ? '0.00' : reviewFormatReportItem.ConversionValueYTD }}</td>
+                                    <td>{{ reviewFormatReportItem.PercentageChangeFromLastWeekConversionValueYTD }}</td>
+                                    <!-- <td>{{ reviewFormatReportItem.BillingDoneYTD }}</td>
+                                    <td>{{ reviewFormatReportItem.PercentageChangeFromLastWeekBillingDoneYTD }}</td> -->
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div *ngIf="paginationModelLastWeek.TotalRecords >= 0">
+                                <ngb-pagination [collectionSize]="paginationModelLastWeek.TotalRecords" (pageChange)="getLastWeekReport($event)" [(page)]="paginationModelLastWeek.CurrentPage" [maxSize]="paginationModelLastWeek.PerPage" [rotate]="true" [ellipses]="false" [boundaryLinks]="true" size="sm"></ngb-pagination>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ngx-loading [show]="isLoading" [config]="{ backdropBorderRadius: '0px' }"></ngx-loading>

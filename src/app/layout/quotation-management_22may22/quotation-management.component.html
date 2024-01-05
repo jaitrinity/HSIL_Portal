@@ -1,0 +1,576 @@
+<div [@routerTransition]>
+  <app-page-header [heading]="'Quatation Management'" [icon]="'fa-users'"></app-page-header>
+  <div class="row">
+    <div class="col col-sm-12">
+        <div class="card mb-3">
+            <div class="card-block">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <a class="btn col-sm-2 btn-border btn-sm" *ngFor="let item of quotationTypeList" [ngClass]="{'btn-info' : currentQuotationType == item }" (click)="changeCurrentType(item)">{{ item }}</a>
+                    </div>                        
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col col-sm-12">
+      <div class="card mb-3">
+        <div class="card-block">
+          <div class="row">
+            <div class="col-sm-10">
+                <h5>{{ currentQuotationType }}</h5>
+            </div>                                               
+          </div>
+          <div *ngIf="currentQuotationType == 'Budgetory' || currentQuotationType == 'Quote to Customer'">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="table-responsive" style="background-color: #FFF;" >
+                  <table class="table table-bordered table-fixed" style="background-color: #fff;">
+                    <thead>
+                      <tr>
+                          <th>Project Name</th>
+                          <th>Project Stage</th>
+                          <th>Project Type</th>
+                          <th>Brand</th>
+                          <th>State</th>
+                          <th>No Of Bath</th>
+                          <!-- <th>More Lead type</th> -->
+                          <!-- <th>More Firm Name</th> -->
+                          <th *ngIf="for_TM">Action for TM</th>
+                          <th *ngIf="for_Commercial">Action for Commercial</th>
+                          <th>Add Product</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let pl of projectList">
+                        <td>{{pl.projectName}}</td>
+                        <td>{{pl.project_stage}}</td>
+                        <td>{{pl.project_type}}</td>
+                        <td>{{pl.brand}}</td>
+                        <td>{{pl.state}}</td>
+                        <td>{{pl.total_bath | number}}</td>
+                        <!-- <td>{{pl.more_lead_type}}</td> -->
+                        <!-- <td>{{pl.more_firm_name}}</td> -->
+                        <td *ngIf="for_TM">
+                          <a href = "javascript:void(0)" (click)="openApprovalPortal(pl.project_quotation_id, 'TM')" 
+                            *ngIf="pl.project_quotation_status == 'QUO_02' || pl.project_quotation_status == 'QUO_05' || pl.project_quotation_status == 'QUO_08' || pl.project_quotation_status == 'QUO_11' ">
+                              PO Receive
+                          </a>
+                          <a href = "javascript:void(0)" (click)="openApprovalPortal(pl.project_quotation_id, 'TM')" 
+                          *ngIf="pl.project_quotation_status == 'QUO_04' || pl.project_quotation_status == 'QUO_07' || pl.project_quotation_status == 'QUO_10' || pl.project_quotation_status == 'QUO_13' || pl.project_quotation_status == 'QUO_16' ">
+                            Close 
+                          </a>
+                        </td>
+                        <td *ngIf="for_Commercial">
+                          <a href = "javascript:void(0)" (click)="openApprovalPortal(pl.project_id, 'Commercial')"
+                          *ngIf="pl.project_po_id != null ">
+                              For Commercial Team
+                          </a>
+                        </td>
+                        <td><a href="javascript:void(0)" (click)="addProduct(pl)" *ngIf="pl.project_stage != 'Conversion'">Add Product</a></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="currentQuotationType == 'View Quotation'">
+            <div class="row">
+              <div class="col-sm-3" style="margin: 10px 0px;">
+                <label>Project Name</label>
+                <select class="form-control" [(ngModel)]="projectName" (change)="changeProjectName()">
+                  <option value="">Select</option>
+                  <option *ngFor="let pn of projectNameList">{{pn}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="table-responsive" style="background-color: #FFF;">
+                  <table class="table table-bordered table-fixed" style="background-color: #fff;">
+                    <thead>
+                      <tr>
+                          <th>Quotation Id</th>
+                          <th>Project Name</th>
+                          <th>Project Stage</th>
+                          <th>Quotation Save Date</th>
+                          <!-- <th>Quotation Type</th> -->
+                          <th *ngIf="is_action_required_on_quotation">Status</th>
+                          <th *ngIf="is_action_required_on_quotation">Action</th>
+                          <th>PDF</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let ql of quatationList">
+                        <td>{{ql.quotation_id}}</td>
+                        <td>{{ql.project_name}}</td>
+                        <td>{{ql.project_stage}}</td>
+                        <td>{{ql.quotationSaveDate}}</td>
+                        <!-- <td>
+                          <span *ngIf="ql.isdiscount==1">Quote to Customer</span>
+                          <span *ngIf="ql.isdiscount!=1">Budgetory</span>
+                        </td> -->
+                        <td *ngIf="is_action_required_on_quotation">
+                          <div *ngIf="ql.isdiscount == 1">
+                            {{ql.pendingTo}}
+                          </div>
+                        </td>
+                        <td *ngIf="is_action_required_on_quotation">
+                          <div *ngIf="ql.isdiscount == 1">
+                            <a href = "javascript:void(0)" (click)="openApprovalPortal(ql.quotation_id, 'HINDWARE_SH')" *ngIf="ql.quotationStatus == 'QUO_01' ">Action</a>
+                            <a href = "javascript:void(0)" (click)="openApprovalPortal(ql.quotation_id, 'HINDWARE_ZM')" *ngIf="ql.quotationStatus == 'QUO_03' ">Action</a>
+                            <a href = "javascript:void(0)" (click)="openApprovalPortal(ql.quotation_id, 'HINDWARE_NSM')" *ngIf="ql.quotationStatus == 'QUO_06' ">Action</a>
+                            <a href = "javascript:void(0)" (click)="openApprovalPortal(ql.quotation_id, 'HINDWARE_CEO')" *ngIf="ql.quotationStatus == 'QUO_09' ">Action</a>
+                            <!-- <a href = "javascript:void(0)" (click)="openApprovalPortal(ql.quotation_id, 'TM')" 
+                            *ngIf="ql.quotationStatus == 'QUO_02' || ql.quotationStatus == 'QUO_05' || ql.quotationStatus == 'QUO_08' || ql.quotationStatus == 'QUO_11' ">
+                              PO Receive
+                            </a>
+                            <a href = "javascript:void(0)" (click)="openApprovalPortal(ql.quotation_id, 'TM')" 
+                            *ngIf="ql.quotationStatus == 'QUO_04' || ql.quotationStatus == 'QUO_07' || ql.quotationStatus == 'QUO_10' || ql.quotationStatus == 'QUO_13' || ql.quotationStatus == 'QUO_16' ">
+                              Close 
+                            </a> -->
+                            <!-- <a href = "javascript:void(0)" (click)="openApprovalPortal(ql.quotation_id, 'Commercial')" *ngIf="ql.quotationStatus == 'QUO_14' ">Action</a> -->
+                            <!-- <a href = "" *ngIf="ql.quotationStatus == 'QUO_01' && loggedInUserRole == 'HINDWARE_SH' ">Action</a>
+                            <a href = "" *ngIf="ql.quotationStatus == 'QUO_03' && loggedInUserRole == 'HINDWARE_ZM' ">Action</a>
+                            <a href = "" *ngIf="ql.quotationStatus == 'QUO_06' && loggedInUserRole == 'HINDWARE_NSM' ">Action</a>
+                            <a href = "" *ngIf="ql.quotationStatus == 'QUO_09' && loggedInUserRole == 'HINDWARE_CEO' ">Action</a> -->
+                          </div>
+                          
+                        </td>
+                        <td>
+                          <a href="javascript:void(0)" (click)="viewQuotPdf(ql.quotation_id,ql.isdiscount)" *ngIf="ql.project_stage !='Lost' ">View PDF</a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ngx-loading [show]="snapshotLoading" [config]="{ backdropBorderRadius: '0px' }"></ngx-loading>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content itemContent">
+      <div class="modal-header">
+        <!-- <h5 class="modal-title" id="exampleModalLabel">Modal title</h5> -->
+        <input type="text" autocomplete="off" class="form-control input-sm" id="item-search-txt" placeholder="Search" (input) = "searchItem($event)"/>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="max-height: 440px;overflow: auto;background: lightgray">
+        <!-- <img src ="../../../assets/images/mobile.png"/> -->
+        <div class="row" *ngFor="let si of searchItemList;" style="margin-bottom: 10px;background: white">
+          <div class="col-sm-3">
+            <label>Image</label>
+            <img [src] = "si.image" (click)="openImgModal(si.image)" style="width: 100px;height: 100px;" class="img-thumbnail"/>
+          </div>
+          <div class="col-sm-3">
+            <label>Line Diagram</label>
+            <img [src] = "si.lineDiagram" (click)="openImgModal(si.lineDiagram)" style="width: 100px;height: 100px;" class="img-thumbnail"/>
+          </div>
+          <div class="col-sm-4">
+              <div>{{si.item_desc}}</div>
+              <div>{{si.item_code}}</div>
+              <div>{{si.color}}</div>
+              <div>{{si.mrp}}</div>
+          </div>
+          <div class="col-sm-2">
+            <button class="btn btn-block btn-default" (click)="addAndRemoveItem('add',si.item_code)">+</button>
+            <input type="text" class="form-control input-sm addItemCount" [attr.mrp]="si.mrp" id="item_{{si.item_code}}" value="0" [disabled]="true">
+            <button class="btn btn-block btn-default" (click)="addAndRemoveItem('remove',si.item_code)">-</button>
+
+          </div>
+          <!-- {{si.item_code}} -- {{si.cat_code}} - {{si.item_desc}} -- {{si.category}} -- {{si.image}} -- {{si.mrp}}
+          -- {{si.gst}} -- {{si.color}} -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button> -->
+        <input type="text" class="form-control input-sm" value="0" id="total_mrp" [disabled]="true" placeholder="Total"/>
+        <input type="text" class="form-control input-sm" value="0" id="total_quantity" [disabled]="true" placeholder="Total Quantity"/>
+        <button class="btn btn-block my-btn" (click)="confirmToAddItem()">Confirm</button>
+      </div>
+    </div>
+
+    <div class="modal-content addedItemContent">
+      <div class="modal-header">
+        <span (click)="backToAddItem('itemContent','addedItemContent')" class="backIcon">
+            <i class="fa fa-angle-left" aria-hidden="true"></i> Back
+        </span>
+        <span>Checkout</span>
+        <span></span>
+      </div>
+      <div class="modal-body" style="max-height: 300px;overflow: auto;background: lightgray">
+        <div class="row" *ngFor="let si of addedItemInfo;let i = index" style="margin-bottom: 10px;background: white">
+          <div class="col-sm-3">
+            <label>Image</label>
+            <img [src] = "si.image" (click)="openImgModal(si.image)" style="width: 100px;height: 100px;" class="img-thumbnail"/>
+          </div>
+          <div class="col-sm-3">
+            <label>Line Diagram</label>
+            <img [src] = "si.lineDiagram" (click)="openImgModal(si.lineDiagram)" style="width: 100px;height: 100px;" class="img-thumbnail"/>
+          </div>
+          <div class="col-sm-4">
+            <div>{{si.item_desc}}</div>
+            <div>{{si.item_code}}</div>
+            <div>{{si.color}}</div>
+            <div>{{si.mrp}}</div>
+            <!-- <div style="display: flex;align-items: center">
+              <label>Exclusive</label>  &nbsp;  
+              <label class="switch" (click)="excIncGst(si.totalPrice,si.gst,si.item_code)">
+                <input type="checkbox" id="gst_{{si.item_code}}">
+                <span class="slider round"></span> 
+              </label>  &nbsp;
+              <label>GST</label> &nbsp; 
+            </div> -->
+          </div>
+          <div class="col-sm-2 text-center">
+            <div style="margin: 20px 10px">Qty : {{si.quantity}}</div>
+            <input type="hidden" class="total_price" id="total_price_{{si.item_code}}" value="{{si.totalPrice}}"/>
+            <input type="hidden" class="tax_price" id="tax_price_{{si.item_code}}" value = 0/>
+            <input type="hidden" class="gst" id="gst_value_{{si.item_code}}" value = 0/>
+            <input type="hidden" class="discount" id="discount_value_{{si.item_code}}" value = 0/>
+            <!-- <div class="text-center" *ngIf="currentQuotationType == 'Quote to Customer' "> -->
+              <button class="btn btn-block my-btn" (click)="openDiscount(si.item_code,si)">Discount</button>
+              <label id="discount_value_HTML_{{si.item_code}}">0.0</label> %
+            <!-- </div> -->
+          </div>
+ 
+        </div>
+        
+      </div>
+      <div class="modal-footer addedItemContent-footer">
+        <div class="row">
+          <div class="col-sm-6">
+            <label>Project Name</label>
+          </div>
+          <div class="col-sm-6">
+            {{projectName}}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <label>Summary</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <label>Total Net Price</label>
+          </div>
+          <div class="col-sm-6">
+            <label>{{totalConfirmPrice}}</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <label>Total Tax</label>
+          </div>
+          <div class="col-sm-6">
+            <label>{{totalConfirmTax}}</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <label>Total Gross Price</label>
+          </div>
+          <div class="col-sm-6">
+            <label>{{totalConfirmGrossPrice}}</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <label>Total Quantity</label>
+          </div>
+          <div class="col-sm-6">
+            <label>{{totalConfirmQuantity}}</label>
+          </div>
+        </div>
+        <!-- <div class="row"> -->
+          <div class="col-sm-6">
+            <!-- <button class="btn btn-block">Add Product</button> -->
+          </div>
+          <div class="col-sm-6">
+            <button class="btn btn-block my-btn" (click)="submitCheckout()">Submit</button>
+          </div>
+        <!-- </div> -->
+      </div>
+    </div>
+
+    <div class="modal-content customerDetailsContent">
+      <div class="modal-header">
+        <span (click)="backToAddItem('addedItemContent','customerDetailsContent')" class="backIcon">
+            <i class="fa fa-angle-left" aria-hidden="true"></i> Back
+        </span>
+        <span>Customer Details</span>
+        <span></span>
+      </div>
+      <div class="modal-body" style="max-height: 300px;overflow: auto;">
+        <div class="row">
+          <div class="col-sm-12">
+            <label>Customer Name</label>
+            <select [(ngModel)] = "customerName" class="form-control input-sm" id="custmerNameInput">
+              <option value="">Select</option>
+              <option value="{{cl.custCode}}---{{cl.custName}}" *ngFor="let cl of customerList">{{cl.custName}}</option>
+            </select>
+          </div>
+        </div>
+        <!-- <div class="row">
+          <div class="col-sm-12">
+            <label>Customer name</label>
+            <input type="text" [(ngModel)] = "customerName" class="form-control input-sm" id="custmerNameInput"/>
+          </div>
+        </div> -->
+        <div class="row">
+          <div class="col-sm-12">
+            <label>Mobile No</label>
+            <input type="text" [(ngModel)] = "mobileNo" class="form-control input-sm" OnlyNumber="true" LengthValidater="10" id="mobileNoInput"/>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+              <label>Email Id</label>
+              <input type="text" [(ngModel)] = "emailId" class="form-control input-sm" id="emailIdInput"/>
+          </div>
+ 
+        </div>
+
+        <div class="row">
+          <div class="col-sm-12">
+              <label>Address</label>
+              <input type="text" [(ngModel)] = "address" class="form-control input-sm" id="addressInput"/>
+          </div>
+ 
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+              <label>State</label>
+              <input type="text" [(ngModel)] = "state" class="form-control input-sm" id="stateInput"/>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-12">
+              <label>City</label>
+              <input type="text" [(ngModel)] = "city" class="form-control input-sm" id="cityInput"/>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-12">
+              <label>Pincode</label>
+              <input type="text" [(ngModel)] = "pincode" class="form-control input-sm" OnlyNumber="true" LengthValidater="6" id="pincodeInput"/>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-12">
+              <label>Type</label>
+              <input type="text" [(ngModel)] = "type" class="form-control input-sm" id="typeInput"/>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-12">
+              <label>Firm Name</label>
+              <input type="text" [(ngModel)] = "firmName" class="form-control input-sm" id="firmNameInput"/>
+          </div>
+        </div>
+
+        <div *ngIf="currentQuotationType == 'Quote to Customer' ">
+          <div class="row">
+            <div class="col-sm-12">
+                <label>SW (Past Sales History in Lacs)</label>
+                <input type="text" [(ngModel)] = "SW_PAST" class="form-control input-sm" OnlyNumber="true" id="SW_PASTInput"/>
+            </div>
+          </div>
+         
+          <div class="row">
+            <div class="col-sm-12">
+                <label>Faucets (Past Sales History in Lacs)</label>
+                <input type="text" [(ngModel)] = "FAUCETS_PAST" class="form-control input-sm" OnlyNumber="true" id="FAUCETS_PASTInput"/>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-12">
+                <label>Past Sales History in Lacs</label>
+                <input type="text" [(ngModel)] = "PAST_Sales" class="form-control input-sm" OnlyNumber="true" id="PAST_SalesInput"/>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-12">
+                <label>Ref ZQT Number</label>
+                <input type="text" [(ngModel)] = "Ref_ZQT" class="form-control input-sm" id="Ref_ZQTInput"/>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-sm-12">
+                <label>TOD on Project Sales (%)</label>
+                <input type="text" [(ngModel)] = "TOD" class="form-control input-sm" OnlyNumberWithDecimal="true" id="TODInput"/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+                <label>Extra liability Faucets (%)</label>
+                <input type="text" [(ngModel)] = "Liability_FAUCETS" class="form-control input-sm" OnlyNumberWithDecimal="true" id="Liability_FAUCETSInput"/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+                <label>Payment Terms for faucets</label>
+                <select class="form-control input-sm" [(ngModel)]="PAY_TERMS_FAUCETS" id="PAY_TERMS_FAUCETSInput">
+                  <option value="">Select</option>
+                  <option>Z007 (7 Days)</option>
+                  <option>ZOO21 (21 Days)</option>
+                  <option>ZOO30 (30 Days)</option>
+                  <option>ZOO45 (45 Days)</option>
+                  <option>ZOO60 (60 Days)</option>
+                </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+                <label>Freight given by</label>
+                <select class="form-control input-sm" [(ngModel)]="FREIGHT_GIVEN_BY" id="FREIGHT_GIVEN_BYInput">
+                  <option value="">Select</option>
+                  <option>Dealer</option>
+                  <option>Company</option>
+                </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+                <label>Freight for Faucets</label>
+                <input type="text" [(ngModel)] = "FREIGHT_FAUCETS" class="form-control input-sm" OnlyNumberWithDecimal="true" id="FREIGHT_FAUCETSInput"/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+                <label>Material dispatch from</label>
+                <select class="form-control input-sm" [(ngModel)]="DISPATCH_FROM" id="DISPATCH_FROMInput">
+                  <option value="">Select</option>
+                  <option>1204 KAHARANI TRADING DIVISION</option>
+                  <option>1327 LUDHIANA DEPOT</option>
+                </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <label>ORC</label>
+              <input type="text" [(ngModel)] = "ORC" class="form-control input-sm" OnlyNumberWithDecimal="true" id="ORCInput"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-12">
+              <label>Term And Condtion</label>
+          </div>
+        </div>
+        <!-- <div class="row" *ngFor="let tnc of termAndCondtionList">
+          <div class="col-sm-12">
+              <label> 
+                <input type="checkbox" class="termAndCondtion" [attr.condition_id] = "tnc.condition_id" checked="currentQuotationType == 'Budgetory' "
+                [disabled]="currentQuotationType == 'Budgetory' "/> 
+                {{tnc.condition_name}}
+              </label>
+          </div>
+        </div> -->
+        <div class="row">
+          <div class="col-sm-12">
+              <ol>
+                <li *ngFor="let tnc of termAndCondtionList" class="termAndCondtion" [attr.condition_id] = "tnc.condition_id">{{tnc.condition_name}}</li>
+              </ol>
+          </div>
+          <div class="col-sm-12">
+            <label>Remark</label>
+            <textarea rows="5" class="form-control" [(ngModel)]="remark" id="remarkInput"></textarea>
+          </div>
+        </div>
+        
+      </div>
+      <div class="modal-footer addedItemContent-footer">
+        <!-- <div class="row"> -->
+          <div class="col-sm-6">
+            <!-- <button class="btn btn-block my-btn">Save to Draft</button> -->
+          </div>
+          <div class="col-sm-6">
+            <button class="btn btn-block my-btn" (click)="saveSkuData()">Submit</button>
+          </div>
+        <!-- </div> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="discountModal" tabindex="-1" role="dialog" aria-labelledby="discountModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+  
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-sm-12">
+                <input type="hidden" id ="discountOnItemcode"/>
+                <input type="hidden" id ="itemGrossPrice"/>
+                <input type="hidden" id ="itemCategory"/>
+                <input type="hidden" id ="itemQuantity"/>
+                <label>Gross Price : <span id ="itemGrossPrice_HTML"></span> </label>
+              </div>
+              <div class="col-sm-12">
+                <label>Net Price : <span id ="itemNetPrice"></span> </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12">
+                <label>Discount on MRP in % :</label>
+                <input type="text" autocomplete="off" class="form-control" id="discount_txt" (input)="applyDiscount($event)" OnlyNumberWithDecimal="true" />
+              </div>
+            </div>
+            
+          </div>
+          <div class="modal-footer">
+              <button class="btn btn-block my-btn" (click)="closeAnyModal('discountModal')">Cancel</button>
+              <button class="btn btn-block my-btn" (click)="applyDiscountOnItem()">Add</button>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Image</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" style="background: lightgray">
+              <div class="row">
+                <div class="col-sm-12">
+                  <img [src]="imageUrl" style="width: 100%;height:100%"/>
+                </div>
+              </div>
+              
+            </div>
+            <!-- <div class="modal-footer">
+                <button class="btn btn-block my-btn" (click)="closeAnyModal('imageModal')">Cancel</button>
+            </div> -->
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,109 @@
+<div [@routerTransition]>
+    <app-page-header [heading]="'Weekly Report'" [icon]="'fa-file-text-o'"></app-page-header>
+
+    <div class="row">
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-block">
+						<div class="row">
+                        <div class="col-sm-6">
+                            <h5>Weekly Report</h5>
+                        </div>
+                        <div class="col-sm-4">
+                            <input type="text" id="searchWeeklyReportReport" name="searchWeeklyReportReport" placeholder="Search..." [(ngModel)]="searchWeeklyReportReport" class="form-control">
+                        </div>
+                        <div class="col-sm-1">
+                            <button (click)="callMethod('excel')" class="btn btn-info btn-sm">EXCEL</button>
+                        </div>
+                        <div class="col-sm-1" *ngIf="true==false">
+                            <button (click)="callMethod('pdf')" class="btn btn-info btn-sm">PDF</button>
+                        </div>
+					</div>					
+                    <div class="table-responsive" style="background-color: #FFF;">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th (click)="sort('BusinessDevelopement')" rowspan="2" class="text-center">Business
+                                        <br>Development &nbsp;<span class="fa fa-sort" *ngIf="key =='BusinessDevelopement'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th colspan="3" class="text-center">Visits Completed</th>
+                                    <th colspan="6" class="text-center">New Enquiries</th>
+                                    <th colspan="6" class="text-center">New Pipeline</th>
+                                    <th colspan="6" class="text-center">Conversion</th>
+                                    <th colspan="6" class="text-center">Order Lost</th>
+                                </tr>
+                                <tr>
+                                    <th (click)="sort('VisitsCompletedNoWeek')" class="text-center">No (Week {{ currentWeek }}) &nbsp;<span class="fa fa-sort" *ngIf="key =='VisitsCompletedNoWeek'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('VisitsCompletedNoMTD')" class="text-center">No (MTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='VisitsCompletedNoMTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('VisitsCompletedValueYTD')" class="text-center">No (YTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='VisitsCompletedValueYTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('NewEnquiriesNoWeek')" class="text-center">No (Week {{ currentWeek }}) &nbsp;<span class="fa fa-sort" *ngIf="key =='NewEnquiriesNoWeek'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('NewEnquiriesValueWeek')" class="text-center">Value (Week {{ currentWeek }}) &nbsp;<span class="fa fa-sort" *ngIf="key =='NewEnquiriesValueWeek'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('NewEnquiriesNoMTD')" class="text-center">No (MTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='NewEnquiriesNoMTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('NewEnquiriesValueMTD')" class="text-center">Value (MTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='NewEnquiriesValueMTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('NewEnquiriesNoYTD')" class="text-center">No (YTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='NewEnquiriesNoYTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('NewEnquiriesValueYTD')" class="text-center">Value (YTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='NewEnquiriesValueYTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('NewPipelineNoWeek')" class="text-center">No (Week {{ currentWeek }}) &nbsp;<span class="fa fa-sort" *ngIf="key =='NewPipelineNoWeek'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('NewPipelineValueWeek')" class="text-center">Value (Week {{ currentWeek }}) &nbsp;<span class="fa fa-sort" *ngIf="key =='NewPipelineValueWeek'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('NewPipelineNoMTD')" class="text-center">No (MTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='NewPipelineNoMTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('NewPipelineValueMTD')" class="text-center">Value (MTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='NewPipelineValueMTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('NewPipelineNoYTD')" class="text-center">No (YTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='NewPipelineNoYTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('NewPipelineValueYTD')" class="text-center">Value (YTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='NewPipelineValueYTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('ConversionNoWeek')" class="text-center">No (Week {{ currentWeek }}) &nbsp;<span class="fa fa-sort" *ngIf="key =='ConversionNoWeek'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('ConversionValueWeek')" class="text-center">Value (Week {{ currentWeek }}) &nbsp;<span class="fa fa-sort" *ngIf="key =='ConversionValueWeek'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('ConversionNoMTD')" class="text-center">No (MTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='ConversionNoMTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('ConversionValueMTD')" class="text-center">Value (MTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='ConversionValueMTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('ConversionNoYTD')" class="text-center">No (YTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='ConversionNoYTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('ConversionValueYTD')" class="text-center">Value (YTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='ConversionValueYTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('OrderLostNoWeek')" class="text-center">No (Week {{ currentWeek }}) &nbsp;<span class="fa fa-sort" *ngIf="key =='OrderLostNoWeek'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('OrderLostValueWeek')" class="text-center">Value (Week {{ currentWeek }}) &nbsp;<span class="fa fa-sort" *ngIf="key =='OrderLostValueWeek'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('OrderLostNoMTD')" class="text-center">No (MTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='OrderLostNoMTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('OrderLostValueMTD')" class="text-center">Value (MTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='OrderLostValueMTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('OrderLostNoYTD')" class="text-center">No (YTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='OrderLostNoYTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                    <th (click)="sort('OrderLostValueYTD')" class="text-center">Value (YTD) &nbsp;<span class="fa fa-sort" *ngIf="key =='OrderLostValueYTD'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of weeklyBDReportModelList | orderBy: { key : reverse } ">
+                                    <td class="text-center">{{item.BusinessDevelopement}}</td>
+                                    <td class="text-center">{{item.VisitsCompletedNoWeek }}</td>
+                                    <td class="text-center">{{item.VisitsCompletedNoMTD }}</td>
+                                    <td class="text-center">{{item.VisitsCompletedNoYTD }}</td>
+                                    <td class="text-center">{{item.NewEnquiriesNoWeek }}</td>
+                                    <td class="text-right">{{item.NewEnquiriesValueWeek }}</td>
+                                    <td class="text-center">{{item.NewEnquiriesNoMTD }}</td>
+                                    <td class="text-right">{{item.NewEnquiriesValueMTD }}</td>
+                                    <td class="text-center">{{item.NewEnquiriesNoYTD }}</td>
+                                    <td class="text-right">{{item.NewEnquiriesValueYTD }}</td>
+                                    <td class="text-center">{{item.NewPipelineNoWeek }}</td>
+                                    <td class="text-right">{{item.NewPipelineValueWeek }}</td>
+                                    <td class="text-center">{{item.NewPipelineNoMTD }}</td>
+                                    <td class="text-right">{{item.NewPipelineValueMTD }}</td>
+                                    <td class="text-center">{{item.NewPipelineNoYTD }}</td>
+                                    <td class="text-right">{{item.NewPipelineValueYTD }}</td>
+                                    <td class="text-center">{{item.ConversionNoWeek }}</td>
+                                    <td class="text-right">{{item.ConversionValueWeek }}</td>
+                                    <td class="text-center">{{item.ConversionNoMTD }}</td>
+                                    <td class="text-right">{{item.ConversionValueMTD }}</td>
+                                    <td class="text-center">{{item.ConversionNoYTD }}</td>
+                                    <td class="text-right">{{item.ConversionValueYTD }}</td>
+                                    <td class="text-center">{{item.OrderLostNoWeek }}</td>
+                                    <td class="text-right">{{item.OrderLostValueWeek }}</td>
+                                    <td class="text-center">{{item.OrderLostNoMTD }}</td>
+                                    <td class="text-right">{{item.OrderLostValueMTD }}</td>
+                                    <td class="text-center">{{item.OrderLostNoYTD }}</td>
+                                    <td class="text-right">{{item.OrderLostValueYTD }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <ngb-pagination [collectionSize]="paginationModel.TotalRecords" 
+                                        (pageChange)="changePage($event)" 
+                                        [(page)]="paginationModel.CurrentPage" 
+                                        [maxSize]="paginationModel.PerPage" 
+                                        [rotate]="true" [ellipses]="false" 
+                                        [boundaryLinks]="true" size="sm"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '0px' }"></ngx-loading>

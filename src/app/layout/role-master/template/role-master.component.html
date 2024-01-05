@@ -1,0 +1,116 @@
+<div [@routerTransition]>
+    <app-page-header [heading]="'Role Master'" [icon]="'fa-user'"></app-page-header>
+    <div class="row">
+        <div class="col col-sm-12" *ngIf="!addNewRole">
+            <div class="card mb-3">
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-sm-7">
+                            <h5 class="pull-left"><b>Role </b><span *ngIf="currentParentId != '-1'">: {{ currentParent || 'Parent' }} </span></h5>
+                        </div>
+                        <div class="col-sm-2">
+                            <a class="btn btn-info btn-sm pull-right" routerLink="/role-master" [routerLinkActive]="['router-link-active']" [queryParams]="{ type: 'add' }">Add New Role</a>
+                        </div>
+                        <div class="col-sm-3">
+                            <select name="currentParentId" [(ngModel)]="currentParentId" (change)="getRoleDetails();" class="form-control btn-sm">
+                                <option value="-1">All Roles</option>
+                                <option value="0">All Parent Roles Only</option>
+                                <option *ngFor="let role of roleList" value="{{ role.Id }}">{{ role.Name }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col col-sm-12" *ngIf="!addNewRole">
+            <div class="card mb-3">
+                <div class="card-block">
+                    <div class="table-responsive" *ngIf="roleMasterModelList && roleMasterModelList.length > 0">
+                        <table class="table">
+                            <thead>
+                                <th (click)="sort('Id')">Sr No &nbsp;<span class="fa fa-sort" *ngIf="key =='Id'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                <th (click)="sort('Name')">Name &nbsp;<span class="fa fa-sort" *ngIf="key =='Name'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>                                
+                                <th *ngIf="currentParentId == '-1'" (click)="sort('ParentName')">Parent &nbsp;<span class="fa fa-sort" *ngIf="key =='ParentName'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                <th (click)="sort('BrandName')">Brand Name &nbsp;<span class="fa fa-sort" *ngIf="key =='BrandName'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                <th (click)="sort('CreatedBy')">Created By &nbsp;<span class="fa fa-sort" *ngIf="key =='CreatedBy'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                <th (click)="sort('CreatedDate')">Created Date &nbsp;<span class="fa fa-sort" *ngIf="key =='CreatedDate'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                <th (click)="sort('StatusName')">Status &nbsp;<span class="fa fa-sort" *ngIf="key =='StatusName'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                <!-- <th>Remove</th> -->
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of roleMasterModelList | orderBy: key : reverse | paginate: { itemsPerPage: 10, currentPage: p }">
+                                    <td>{{ item.Id }}</td>
+                                    <td>{{ item.Name }}</td>
+                                    <td *ngIf="currentParentId == '-1'">{{ item.ParentName || 'Parent' }}</td>
+                                    <td >{{ item.BrandName }}</td>
+                                    <td>{{ item.CreatedBy }}</td>
+                                    <td>{{ item.CreatedDate }}</td>
+                                    <td>{{ item.StatusName }}</td>
+                                    <!-- <td><a class="btn btn-link btn-sm" (click)="deleteRoleMasterDetails(item.Id)"><i class="fa fa-times"></i></a></td> -->
+                                </tr>
+                            </tbody>
+                        </table>
+                        <pagination-controls (pageChange)="p = $event"></pagination-controls>
+					</div>
+					<h4 *ngIf="roleMasterModelList && roleMasterModelList.length == 0">No Data Available!!!</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col col-sm-12" *ngIf="addNewRole">
+            <div class="card mb-3">
+                <div class="card-block">
+                    <h5 class="pull-left">Add Role Master Detail</h5>
+                    <a class="btn btn-info btn-sm pull-right" routerLink="/role-master" [routerLinkActive]="['router-link-active']">Role Master Details</a>
+                </div>
+            </div>
+        </div>
+        <div class="col col-sm-12" *ngIf="addNewRole">
+            <div class="card mb-3">
+                <form (ngSubmit)="saveRoleDetail(createRoleForm)" #createRoleForm="ngForm" id="createRoleForm" novalidate>
+                    <div class="card-block">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <fieldset class="form-group">
+                                    <label>Role Name<span class="error">*</span></label>
+                                    <input type="text" name="title" [(ngModel)]="roleMasterModel.Name" class="form-control" placeholder="Title" pattern='^(?!\s)([a-zA-Z0-9 _."()!?&]){1,}$' #Name="ngModel" required>
+                                    <p class="error" *ngIf="Name.errors?.required && !createRoleForm.pristine">This field is required</p>
+                                    <p class="error" *ngIf="Name.errors?.pattern && !createRoleForm.pristine">Please provide a valid content.</p>
+                                </fieldset>
+                            </div>
+                            <div class="col-lg-6">
+                                <fieldset class="form-group">
+                                    <label>User Role Parent Role</label>
+                                    <select class="form-control" [(ngModel)]="roleMasterModel.Parent" name="Parent" #Parent="ngModel">
+                                        <option value="0">Parent(Default)</option>
+                                        <option *ngFor="let role of roleList" value="{{ role.Id }}">{{ role.Name }}</option>
+                                    </select>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <fieldset class="form-group">
+                                    <label>Brand Name<span class="error">*</span></label>                                    
+                                    <select class="form-control" [(ngModel)]="roleMasterModel.BrandName" name="BrandName" #BrandName="ngModel" pattern='^(?!\s)([a-zA-Z0-9 _."()!?&]){1,}$' required>                                        
+                                        <option value="-1">Select Brand Name</option>
+                                        <option *ngFor="let item of brandList" value="{{ item }}">{{ item }}</option>
+                                    </select>                                    
+                                    <p class="error" *ngIf="BrandName.errors?.pattern && !createRoleForm.pristine">This field is required</p>                                    
+                                </fieldset>
+                            </div>
+                            <div class="col-lg-6">
+                                <fieldset class="form-group">
+                                    
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-info btn-sm">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '0px' }"></ngx-loading>

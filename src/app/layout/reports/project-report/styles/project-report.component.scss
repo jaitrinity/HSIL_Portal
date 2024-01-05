@@ -1,0 +1,26 @@
+.grid {
+    position: relative;
+}
+ 
+.grid-item {
+    position: absolute;
+}
+ 
+.grid-item.moving {
+    z-index: z-index + 1;
+}
+ 
+.placeholder {
+    position: absolute;
+}
+.btn-border:hover
+{
+    border: 1px solid #31B0D5;
+}
+.image-center{
+    margin: 0 auto;
+    display: block;
+}
+.modal-body{
+    overflow: auto !important;
+}

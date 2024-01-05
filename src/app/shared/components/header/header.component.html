@@ -1,0 +1,57 @@
+<div class="pos-f-t fixed-top header">
+	<nav class="navbar navbar-inverse bg-inverse navbar-toggleable-md">
+		<button class="navbar-toggler navbar-toggler-right"
+			(click)="toggleSidebar()">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<a class="navbar-brand" href="javascript:void(0)"><img
+		width="100"
+			src="./assets/images/logo.png"></a>
+		<div class="collapse navbar-collapse">
+			<div class="my-2 my-lg-0">
+				<a (click)="inActiveSidebar()" class="btn btn-link btn-md">
+					<i class="fa fa-bars"></i>
+				</a>
+			</div>
+			<ul class="navbar-nav ml-auto mt-2 mt-md-0">
+					<li class="nav-item">
+							<a
+							href="javascript:void(0)" (click)="navigateToMap()" class="nav-link"> 
+							<i class="fa fa-map-marker" style="font-size: 30px; color: brown; margin-top: -8px;"></i></a>
+					</li>
+					<li class="nav-item">
+						<a
+							href="javascript:void(0)" class="nav-link" style="font-size:17px; font-weight: bold;"> 
+							{{selectedUserName}}</a>	
+					</li>
+					<select name="selectedUser"
+						id="selectedUser"
+						(change)="changeSelectedEmployee($event)"
+						[(ngModel)]="selectedUser" style="height: 20px; width: 150px; margin-top: 15px;">
+						<option value="" selected [hidden]="true">All User</option>
+						<option value="">All User</option>
+						<option *ngFor="let user of userLists" value="{{ user.EMP_ID }}">{{ user.EMP_NAME }}</option>
+					</select>
+			
+				<li class="nav-item dropdown" ngbDropdown>
+					<a
+					href="javascript:void(0)" class="nav-link" ngbDropdownToggle> <i
+						class="fa fa-user"></i> {{ employeeName }} <b class="caret"></b>
+				</a>
+					<div class="dropdown-menu dropdown-menu-right">						
+						<a class="dropdown-item" 
+						routerLink="/user-details" 
+						[routerLinkActive]="['router-link-active']"><i
+							class="fa fa-fw fa-user"></i> Profile</a>
+							<a 	class="dropdown-item"							 
+								routerLink="/change-password" 
+								[routerLinkActive]="['router-link-active']"><i class="fa fa-fw fa-key"></i>
+								Change Password</a>
+							 <button class="dropdown-item"							 
+							(click)="onLoggedout()"><i class="fa fa-fw fa-power-off"></i>
+							Log Out</button>
+					</div></li>
+			</ul>
+		</div>
+	</nav>
+</div>

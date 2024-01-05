@@ -1,0 +1,109 @@
+<div [@routerTransition]>
+	<app-page-header [heading]="currentReport"
+		[icon]="'fa-file-text-o'"></app-page-header>
+	<div class="row">
+		<div class="col col-sm-12">
+			<div class="card mb-3">
+				<div class="card-block">
+						<a class="col-sm-2 btn bnt-link btn-border btn-sm"
+						*ngFor="let item of brandList"
+						[ngClass]="{'btn-info' : currentBrand == item}"
+						routerLink="/ytd-consolidated-report"
+						[routerLinkActive]="['router-link-active']"
+						[queryParams]="{ type: item }">{{ item }}</a>					
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row" *ngIf="ytdConsolidatedReportList && ytdConsolidatedReportList.length == 0">
+			<div class="col col-sm-12">
+				<div class="card mb-3">				
+					<div class="card-block">
+						<div class="row">
+							<h4>No Data Available!!!</h4>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+	<div class="row" *ngIf="ytdConsolidatedReportList && ytdConsolidatedReportList.length > 0">
+		<div class="col col-sm-12">
+			<div class="card mb-3">				
+				<div class="card-block" >
+					<div class="row">							
+						<div class="col-sm-6"><h4 class="pull-left">YTD Consolidated Report</h4></div>
+						<div class="col-sm-4"><input type="text" placeholder="Search here..." 
+							id="searchYTDConsolidatedReport" class="form-control" 
+							name="searchYTDConsolidatedReport" [(ngModel)]="searchYTDConsolidatedReport"></div>
+						<div class="col-sm-1"><button (click)="callMethod('excel')" 
+							class="btn btn-info btn-sm">EXCEL</button>
+						</div>
+						<div class="col-sm-1">
+							<button (click)="callMethod('pdf')"
+							class="btn btn-info btn-sm">PDF</button>
+						</div>
+					</div>					
+					<div class="table-responsive" style="background-color: #FFF;">
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th (click)="sort('Id')" rowspan="2" class="text-center">Sr No&nbsp;<span class="fa fa-sort" *ngIf="key =='Id'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th *ngIf="currentEmployeeRole == 'Administrator'" (click)="sort('Zone')" rowspan="2" class="text-center">Zone&nbsp;<span class="fa fa-sort" *ngIf="key =='Zone'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th *ngIf="currentEmployeeRole != 'Administrator'" (click)="sort('EmployeeName')" rowspan="2" class="text-center">Zone&nbsp;<span class="fa fa-sort" *ngIf="key =='EmployeeName'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th colspan="2" class="text-center">Enquiries</th>
+									<th colspan="6" class="text-center">Pipeline</th>
+									<th colspan="2" class="text-center">Conversion</th>
+									<th colspan="2" class="text-center">Lost</th>
+									<th class="text-center">% Enquiries <br>to Pipeline</th>
+									<th class="text-center">% Pipeline <br>to Conversion</th>
+									<th class="text-center">% Enquiries <br>to Conversion</th>
+								</tr>
+								<tr>
+									<th (click)="sort('EnquiriesYTDNos')" class="text-center">Nos&nbsp;<span class="fa fa-sort" *ngIf="key =='EnquiriesYTDNos'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('EnquiriesYTDValue')" class="text-center">Value&nbsp;<span class="fa fa-sort" *ngIf="key =='EnquiriesYTDValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('PipelineHotValue')" class="text-center">Hot <br>Value&nbsp;<span class="fa fa-sort" *ngIf="key =='PipelineHotValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('PipelineWarmValue')" class="text-center">Warm <br>Value&nbsp;<span class="fa fa-sort" *ngIf="key =='PipelineWarmValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('PipelineColdValue')" class="text-center">Cold <br>Value&nbsp;<span class="fa fa-sort" *ngIf="key =='PipelineColdValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('PipelineBudgetaryValue')" class="text-center">Budgetary <br>Value&nbsp;<span class="fa fa-sort" *ngIf="key =='PipelineBudgetaryValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('PipelineTotalNos')" class="text-center">Total <br>Nos&nbsp;<span class="fa fa-sort" *ngIf="key =='PipelineBudgetaryValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('PipelineTotalValue')" class="text-center">Total <br>Value&nbsp;<span class="fa fa-sort" *ngIf="key =='PipelineTotalValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('ConversionYTDNos')" class="text-center">YTD <br>Nos&nbsp;<span class="fa fa-sort" *ngIf="key =='ConversionYTDNos'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('ConversionYTDValue')" class="text-center">YTD <br>Value&nbsp;<span class="fa fa-sort" *ngIf="key =='ConversionYTDValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('LostYTDNos')" class="text-center">YTD <br>Nos&nbsp;<span class="fa fa-sort" *ngIf="key =='LostYTDNos'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('LostYTDValue')" class="text-center">YTD <br>Value&nbsp;<span class="fa fa-sort" *ngIf="key =='LostYTDValue'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('PercentEnquiriesToPipeline')" class="text-center">Pip/Enq&nbsp;<span class="fa fa-sort" *ngIf="key =='PercentEnquiriesToPipeline'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('PercentPipelineToConversion')" class="text-center">Con/Pip&nbsp;<span class="fa fa-sort" *ngIf="key =='PercentPipelineToConversion'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+									<th (click)="sort('PercentEnquiriesToConversion')" class="text-center">Con/Enq&nbsp;<span class="fa fa-sort" *ngIf="key =='PercentEnquiriesToConversion'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+								</tr>								
+							</thead>
+							<tbody>
+								<tr *ngFor="let item of ytdConsolidatedReportList | orderBy: { key : reverse }">
+									<td class="text-center">{{item.SrNo}}</td>
+									<td *ngIf="item.Zone" class="text-center">{{item.Zone}}</td>
+									<td *ngIf="item.EmployeeName" class="text-center">{{item.EmployeeName}}</td>
+									<td class="text-center">{{item.EnquiriesYTDNos}}</td>
+									<td class="text-right">{{item.EnquiriesYTDValue}}</td>
+									<td class="text-right">{{item.PipelineHotValue}}</td>
+									<td class="text-right">{{item.PipelineWarmValue}}</td>
+									<td class="text-right">{{item.PipelineColdValue}}</td>
+									<td class="text-right">{{item.PipelineBudgetaryValue}}</td>
+									<td class="text-center">{{item.PipelineTotalNos}}</td>
+									<td class="text-right">{{item.PipelineTotalValue }}</td>
+									<td class="text-center">{{item.ConversionYTDNos}}</td>
+									<td class="text-right">{{item.ConversionYTDValue}}</td>
+									<td class="text-center">{{item.LostYTDNos}}</td>
+									<td class="text-center">{{item.LostYTDValue}}</td>
+									<td class="text-right">{{item.PercentEnquiriesToPipeline}}</td>
+									<td class="text-right">{{item.PercentPipelineToConversion}}</td>
+									<td class="text-right">{{item.PercentEnquiriesToConversion}}</td>
+								</tr>
+							</tbody>
+						</table>
+						<ngb-pagination  [collectionSize]="paginationModel.TotalRecords" (pageChange)="changePage($event)" [(page)]="paginationModel.CurrentPage" [maxSize]="paginationModel.PerPage" [rotate]="true" [ellipses]="false" [boundaryLinks]="true" size="sm"></ngb-pagination>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '0px' }"></ngx-loading>

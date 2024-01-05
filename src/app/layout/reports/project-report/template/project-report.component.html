@@ -1,0 +1,372 @@
+<div [@routerTransition]>
+    <app-page-header [heading]="currentReportName" [icon]="'fa-users'"></app-page-header> 
+    <div class="row">
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <a class="btn col-sm-2 btn-border btn-sm" *ngFor="let item of projectTypeList" [ngClass]="{'btn-info' : currentProjectType == item }" (click)="changeCurrentType(item)">{{ item }}</a>
+                        </div>                        
+                        <div class="col-sm-2" *ngIf="true==false">
+                            <select class="form-control" name="currentMonth"
+                                id="currentMonth" [(ngModel)]="currentMonth"
+                                (change)="getProjectReportSnapshot()">
+                                <option value="All">All</option>
+                                <option *ngFor="let item of visitsMonths" value="{{ item }}">{{ item }}</option>
+                            </select>
+                        </div>                                                
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" >
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-sm-11">
+                            <h4>Filters</h4>
+                        </div>
+                        <div class="col-sm-1" *ngIf="!isShowFilters">
+                            <button (click)="isShowFilters = true;" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-plus"></i></button>
+                        </div>
+                        <div class="col-sm-1" *ngIf="isShowFilters">
+                            <button (click)="isShowFilters = false;" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="isShowFilters">
+                        <!-- <div class="col-sm-1">
+                            
+                        </div> -->
+                        <div class="col-sm-2">
+                                <h6>From Date</h6>
+                                <my-date-picker name="projectReportFromDate" placeholder="yyyy/mm/dd" [options]="myDatePickerOptions"
+                                (dateChanged)="onDateFromChanged($event)"></my-date-picker>
+                          <!--   <owl-date-time [(ngModel)]="projectReportFromDate" 
+                            [type]="'calendar'"
+							[dataType]="'date'"
+                            [autoClose]="true"
+                            [dateFormat]="'YYYY/MM/DD'"
+                            [placeHolder]="'YYYY/MM/DD'"
+                            [hourFormat]="'12'"
+                            [selectionMode]="'single'"
+                            name="projectReportFromDate"
+                            [locale]="en"></owl-date-time>    -->                                             
+                        </div>
+                       <!--  <div class="col-sm-1">
+                            <h6>To Date</h6>
+                        </div> -->
+                        <div class="col-sm-2">
+                                <h6>To Date</h6>
+                                <my-date-picker name="projectReportToDate" placeholder="yyyy/mm/dd" [options]="myDatePickerOptions"
+                                (dateChanged)="onDateEndChanged($event)"></my-date-picker>
+                           <!--  <owl-date-time [(ngModel)]="projectReportToDate" 
+                            [type]="'calendar'"
+							[dataType]="'date'"
+                            [autoClose]="true"
+                            [dateFormat]="'YYYY/MM/DD'"
+                            [placeHolder]="'YYYY/MM/DD'"
+                            [hourFormat]="'12'"
+                            [selectionMode]="'single'"
+                            name="projectReportToDate" 
+                            [locale]="en"></owl-date-time>             -->                                    
+                        </div>   
+                        <div class="col-sm-2">
+                            <h6 style="color: transparent">Select Project</h6>
+                            <select class="form-control" name="taggedProject"
+                                    id="taggedProject" [(ngModel)]="taggedProject"
+                                    (change)="getProjectReportSnapshot()">
+                                    <option value="0">All Projects</option>
+                                    <option value="1">Tagged Project</option>
+                                    <option value="2">Self Created Project</option>
+                            </select>
+                        </div>
+                               
+                        <div class="col-md-2">
+                            <h6 style="color: transparent">Select Virtual City</h6>
+                            <select class="form-control" name="virtualState"
+                            id="virtualState" [(ngModel)]="virtualState"
+                                (change)="getProjectReportSnapshot()">
+                                <option [ngValue]="undefined">Select Virtual State</option>  
+                                <option *ngFor="let virtual of virtualCity" value="{{virtual.VIRTUAL_CITY}}">{{virtual.VIRTUAL_CITY}}</option>                         
+                            </select>
+                        </div>
+                        <div class="col-md-2" *ngIf="role === 'BDM_HEAD' || role === 'HINDWARE_ZM' || role === 'LIFESTYLE_ZM' || role === 'Hindware_NSM' || role === 'Hindware_PR' ||role === 'Administrator' || role === 'HINDWARE_HH'">
+                            <h6 style="color: transparent">Select Zone</h6>
+                            <select class="form-control" name="zone"
+                            id="zone" [(ngModel)]="zone"
+                                (change)="getProjectReportSnapshot()">
+                                <option [ngValue]="undefined">Select Zone</option>  
+                                <option *ngFor="let z of zoneList" value="{{z.ZONE}}">{{z.ZONE}}</option>                         
+                            </select>
+                        </div>   
+                        <div class="col-md-2" *ngIf="ishotWarmCode">
+                                <h6 style="color: transparent">Month Of Closure</h6>
+                                <select class="form-control" name="monthOfCloser"
+                                id="monthOfCloser" [(ngModel)]="monthOfCloser"
+                                    (change)="getProjectReportSnapshot()">
+                                    <option [ngValue]="undefined">Select Month Of Closure</option>  
+                                    <option value="HOT (0-3 Months)">HOT (0-3 Months)</option>    
+                                    <option value="WARM (3-6 Months)">WARM (3-6 Months)</option>      
+                                    <option value="COLD (6-12 Months)">COLD (6-12 Months)</option>               
+                                </select>
+                            </div>            
+                        <div class="col-sm-2">
+                            <h6 style="color: transparent">Get Report</h6>
+                            <button type="button"
+                                (click)="getProjectReportSnapshot()"
+                                class="btn btn-sm btn-info">Get Report</button>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>   
+    <div class="row">
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <h5>Project {{ currentProjectType }} Summary</h5>
+                        </div>                                               
+                        <div class="col-sm-2" *ngIf="!isShowProjectSummery">
+                            <button (click)="isShowProjectSummery = true" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-plus"></i></button>
+                        </div>
+                        <div class="col-sm-2" *ngIf="isShowProjectSummery">
+                            <button (click)="isShowProjectSummery = false" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div *ngIf="isShowProjectSummery">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th class="text-center">No. of Projects</th>
+                                    <th class="text-center">Value (in Lacs)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngIf="currentProjectType == 'Conversion'">
+                                    <th>Conversion Value Current month</th>
+                                    <td class="text-center">{{ projectSummeryModel?.ConversionThisMonthNo }}</td>
+                                    <td class="text-right">{{ projectSummeryModel?.ConversionThisMonthValue}}</td>
+                                </tr>
+                                <tr *ngIf="currentProjectType == 'Conversion'">
+                                    <th>Conversion Value Current fiscal period</th>
+                                    <td class="text-center">{{ projectSummeryModel?.ConversionThisFiscalPeriodNo }}</td>
+                                    <td class="text-right">{{ projectSummeryModel?.ConversionThisFiscalPeriodValue}}</td>
+                                </tr>
+                                <tr *ngIf="currentProjectType == 'Conversion'">
+                                    <th>Total Conversion</th>
+                                    <td class="text-center">{{ projectSummeryModel?.TotalConversionNo}}</td>
+                                    <td class="text-right">{{ projectSummeryModel?.TotalConversionValue}}</td>
+                                </tr>
+                                <tr *ngIf="currentProjectType == 'Enquiry'">
+                                    <th>Enquiry Value Current month</th>
+                                    <td class="text-center">{{ projectSummeryModel?.EnquiryThisMonthNo}}</td>
+                                    <td class="text-right">{{ projectSummeryModel?.EnquiryThisMonthValue}}</td>
+                                </tr>
+                                <tr *ngIf="currentProjectType == 'Enquiry'">
+                                    <th>Enquiry Value Current fiscal period</th>
+                                    <td class="text-center">{{ projectSummeryModel?.EnquiryThisFiscalPeriodNo}}</td>
+                                    <td class="text-right">{{ projectSummeryModel?.EnquiryThisFiscalPeriodValue}}</td>
+                                </tr>
+                                <tr *ngIf="currentProjectType == 'Enquiry'">
+                                    <th>Total Enquiry</th>
+                                    <td class="text-center">{{ projectSummeryModel?.TotalEnquiryNo}}</td>
+                                    <td class="text-right">{{ projectSummeryModel?.TotalEnquiryValue}}</td>
+                                </tr>
+                                <tr *ngIf="currentProjectType == 'Pipeline'">
+                                    <th>Pipeline Value Current month</th>
+                                    <td class="text-center">{{ projectSummeryModel?.PipelineThisMonthNo}}</td>
+                                    <td class="text-right">{{ projectSummeryModel?.PipelineThisMonthValue}}</td>
+                                </tr>
+                                <tr *ngIf="currentProjectType == 'Pipeline'">
+                                    <th>Pipeline Value Current fiscal period</th>
+                                    <td class="text-center">{{ projectSummeryModel?.PipelineThisFiscalPeriodNo}}</td>
+                                    <td class="text-right">{{ projectSummeryModel?.PipelineThisFiscalPeriodValue}}</td>
+                                </tr>
+                                <tr *ngIf="currentProjectType == 'Pipeline'">
+                                    <th>Total Pipeline</th>
+                                    <td class="text-center">{{ projectSummeryModel?.TotalPipelineNo}}</td>
+                                    <td class="text-right">{{ projectSummeryModel?.TotalPipelineValue}}</td>
+                                </tr>
+                                <tr *ngIf="currentProjectType == 'OrderLost'">
+                                    <th>Order Lost Value Current month</th>
+                                    <td class="text-center">{{ projectSummeryModel?.LostThisMonthNo}}</td>
+                                    <td class="text-right">{{ projectSummeryModel?.LostThisMonthValue}}</td>
+                                </tr>
+                                <tr *ngIf="currentProjectType == 'OrderLost'">
+                                    <th>Order Lost Value Current fiscal period</th>
+                                    <td class="text-center">{{ projectSummeryModel?.LostThisFiscalPeriodNo}}</td>
+                                    <td class="text-right">{{ projectSummeryModel?.LostThisFiscalPeriodValue}}</td>
+                                </tr>
+                                <tr *ngIf="currentProjectType == 'OrderLost'">
+                                    <th>Total Order Lost</th>
+                                    <td class="text-center">{{ projectSummeryModel?.TotalLostNo}}</td>
+                                    <td class="text-right">{{ projectSummeryModel?.TotalLostValue}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" >
+        <div class="col col-sm-12">
+            <div class="card mb-3">
+                <div class="card-block">
+                    <ng-container >
+                        <div class="row">
+                            <div class="col-sm-7">
+                                <h5>Project {{ currentProjectType }} Snapshot</h5>
+                            </div>
+                            <div class="col-sm-2">
+                                <input type="text" id="searcProjectSnapshotReport" name="searcProjectSnapshotReport" placeholder="Search..." [(ngModel)]="searcProjectSnapshotReport" class="form-control">
+                            </div>
+                            <div class="col-sm-1">
+                                <button class="btn btn-info btn-sm" (click)="resetSnapshotPagination(1)">Search</button>
+                            </div>
+                            <div class="col-sm-1">
+                                <button (click)="callSnapshotMethod('excel')" class="btn btn-info btn-sm">EXCEL</button>
+                            </div>
+                            <div class="col-sm-1" *ngIf="true==false">
+                                <button (click)="callSnapshotMethod('pdf')" class="btn btn-info btn-sm">PDF</button>
+                            </div>
+                            <div class="col-sm-1" *ngIf="!isShowProjectSnashot">
+                                <button (click)="isShowProjectSnashot = true" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-plus"></i></button>
+                                </div>
+                            <div class="col-sm-1" *ngIf="isShowProjectSnashot">
+                                <button (click)="isShowProjectSnashot = false" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-minus"></i></button>
+                            </div>
+                        </div>
+                        <div class="table-responsive" style="background-color: #FFF;" *ngIf="isShowProjectSnashot">                            
+                            <table class="table table-bordered table-fixed" style="background-color: #fff;">
+                                <thead>
+                                    <tr>
+                                        <th>Sr No</th>
+                                        <th *ngFor="let columnItem of projectReportSnapshotColumnList" (click)="sortSnapshot(columnItem)">{{ columnItem }} &nbsp;<span class="fa fa-sort" *ngIf="projectSnapshotReportSortBy ==columnItem "  [ngClass]="{'fa-sort-asc':projectSnapshotReportSortByReverse,'fa-sort-desc':!projectSnapshotReportSortByReverse}"></span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let rowItem of  projectReportSnapshotModelList;let snapshotIdx = index;">
+                                        <td>{{ snapshotSrNo + snapshotIdx + 1 }}</td>
+                                        <td *ngFor="let dataItem of rowItem;let idx = index">
+                                            <ng-container *ngIf="(idx == 15 && currentProjectType == 'Conversion') || ((idx == 15 || idx == 16 || idx == 17) && currentProjectType == 'Pipeline')">
+                                                <a (click)="updateCurrentImage(dataItem);open(content)">
+                                                    <img src="{{ dataItem || errorImage }}" width="100">
+                                                </a>
+                                            </ng-container>
+                                            <ng-container *ngIf="!((idx == 15 && currentProjectType == 'Conversion') || ((idx == 15 || idx == 16 || idx == 17) && currentProjectType == 'Pipeline'))">
+                                                <span *ngIf="dataItem && dataItem != 'null'">
+                                                    {{ dataItem }}
+                                                </span>                                                                                                
+                                                <span *ngIf="dataItem && dataItem == 'null'">-</span>
+                                                <span *ngIf="!dataItem">-</span>
+                                            </ng-container>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <ngb-pagination [collectionSize]="paginationSnapshotModel.TotalRecords" 
+                                        (pageChange)="changeSnapshotPage($event)" 
+                                        [(page)]="paginationSnapshotModel.CurrentPage" 
+                                        [maxSize]="paginationSnapshotModel.PerPage" 
+                                        [rotate]="true" [ellipses]="false" 
+                                        [boundaryLinks]="true" size="sm"></ngb-pagination>                            
+                        </div>
+                    </ng-container>                    
+                </div>
+            </div>
+        </div>
+        <ngx-loading [show]="snapshotLoading" [config]="{ backdropBorderRadius: '0px' }"></ngx-loading>
+    </div>
+    <div class="row" >
+            <div class="col col-sm-12">
+                <div class="card mb-3">
+                    <div class="card-block">
+                        <ng-container >
+                            <div class="row">
+                                <div class="col-sm-7">
+                                    <h5>Project {{ currentProjectType }} Details</h5>
+                                </div>
+                                <div class="col-sm-2">
+                                    <input type="text" id="searcProjectDetailsReport" name="searcProjectDetailsReport" placeholder="Search..." [(ngModel)]="searcProjectDetailsReport" class="form-control">
+                                </div>
+                                <div class="col-sm-1">
+                                    <button type="button" class="btn btn-info btn-sm"  (click)="resetDetailsPagination(1)">Search</button>
+                                </div>
+                                <div class="col-sm-1">
+                                    <button (click)="callDetailsMethod('excel')" class="btn btn-info btn-sm">EXCEL</button>
+                                </div>
+                                <div class="col-sm-1" *ngIf="true==false">
+                                    <button (click)="callDetailsMethod('pdf')" class="btn btn-info btn-sm">PDF</button>
+                                </div>
+                                <div class="col-sm-1" *ngIf="!isShowProjectDetails">
+                                    <button (click)="isShowProjectDetails = true;getProjectReportDetails();" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-plus"></i></button>
+                                </div>
+                                <div class="col-sm-1" *ngIf="isShowProjectDetails">
+                                    <button (click)="isShowProjectDetails = false;" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-minus"></i></button>
+                                </div>
+                            </div>
+                            <div class="table-responsive" style="background-color: #FFF;" *ngIf="isShowProjectDetails">
+                                <table class="table table-bordered table-fixed" style="background-color: #fff;">
+                                    <thead>
+                                        <tr>
+                                            <th>Sr No</th>
+                                            <th *ngFor="let columnItem of projectReportDetailsColumnList" > <span style="text-transform: capitalize !important;"> {{ columnItem.split('_').join(' ') }} </span></th>
+                                            <!-- (click)="sortDetails(columnItem)"  &nbsp;<span class="fa fa-sort" *ngIf="projectDetailsReportSortBy ==columnItem "  [ngClass]="{'fa-sort-asc':projectDetailsReportSortByReverse,'fa-sort-desc':!projectDetailsReportSortByReverse}"></span> -->
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let rowItem of  projectReportDetailsModelList;let detailsIdx = index;">
+                                                <td>{{ detailsSrNo + detailsIdx + 1 }}</td>
+                                            <td *ngFor="let dataItem of rowItem;let idx = index">
+                                                <ng-container *ngIf="(currentProjectType == 'Pipeline' && (idx == 50 || idx == 51 || idx == 52)) || (currentProjectType == 'Conversion' && idx == 42)">
+                                                    <a (click)="updateCurrentImage(dataItem);open(content)">
+                                                        <img src="{{ dataItem || errorImage }}" width="100">
+                                                    </a>
+                                                </ng-container>
+                                                <ng-container *ngIf="!((currentProjectType == 'Pipeline' && (idx == 50 || idx == 51 || idx == 52)) || (currentProjectType == 'Conversion' && idx == 42))">
+                                                    <span *ngIf="dataItem && dataItem != 'null'">
+                                                        {{ dataItem }}
+                                                    </span>
+                                                    <span *ngIf="dataItem && dataItem == 'null'">-</span>
+                                                    <span *ngIf="!dataItem">-</span>
+                                                </ng-container>                                                                                             
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <ngb-pagination [collectionSize]="paginationDetailsModel.TotalRecords" 
+                                            (pageChange)="changeDetailsPage($event)" 
+                                            [(page)]="paginationDetailsModel.CurrentPage" 
+                                            [maxSize]="paginationDetailsModel.PerPage" 
+                                            [rotate]="true" [ellipses]="false" 
+                                            [boundaryLinks]="true" size="sm"></ngb-pagination>                            
+                            </div>
+                        </ng-container>                    
+                    </div>
+                </div>
+            </div>
+            <ngx-loading [show]="detailsLoading" [config]="{ backdropBorderRadius: '0px' }"></ngx-loading>
+        </div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss">		
+    <div class="modal-header">
+            <h4 class="modal-title">Image Preview</h4>
+            <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">        
+            <img class="text-center" class="image-center" src="{{ currentImageUrl }}">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="c('Close click')">Close</button>
+        </div>		
+</ng-template>

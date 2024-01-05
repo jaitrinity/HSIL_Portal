@@ -1,0 +1,35 @@
+<div class="login-page" [@routerTransition]>
+	<div class="row">
+		<div class="col-md-4 push-md-4">
+			<img src="assets/images/logo.jpg" width="150px" class="user-avatar" />
+			<form (ngSubmit)="userLogin(userLoginForm)" #userLoginForm="ngForm" id="userLoginForm" novalidate>
+				<div class="form-content">					
+					<div class="form-group">
+							<input type="text" 
+								[(ngModel)]="authenticationModel.Username"
+								class="form-control input-underline input-lg" 							
+								placeholder="User Name  or User Id"
+								name="Username"
+								#Username="ngModel"
+								required>
+								<p class="error" *ngIf="Username.errors?.required && !userLoginForm.pristine">This field is required</p>								
+						</div>
+					<div class="form-group">
+							<input type="password" 
+							[(ngModel)]="authenticationModel.Password"
+							class="form-control input-underline input-lg" 							
+							placeholder="Password" 							
+							name="Password" 
+							#Password="ngModel"                                                 
+							required>
+							<p class="error" *ngIf="Password.errors?.required && !userLoginForm.pristine">This field is required</p>
+					</div>
+					<div class="form-group">
+						<h4 *ngIf="isLoginWait">Please Wait...</h4>
+						<button type="submit" *ngIf="!isLoginWait" class="btn rounded-btn">Log In</button>						
+					</div>
+				</div>					
+			</form>
+		</div>
+	</div>
+</div>

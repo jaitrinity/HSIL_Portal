@@ -1,0 +1,250 @@
+<div [@routerTransition]>
+        <app-page-header [heading]="'Visit'" [icon]="'fa-users'"></app-page-header>
+        <div class="row">
+            <div class="col col-sm-12">
+                <div class="card mb-3">
+                    <div class="card-block">
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <h4 class="pull-left">Filters</h4>
+                            </div>
+                            <div class="col-sm-2 pull-right" *ngIf="!isShowFilters">
+                                <button (click)="isShowFilters = true" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-plus"></i></button>
+                            </div>
+                            <div class="col-sm-2 pull-right" *ngIf="isShowFilters">
+                                <button (click)="isShowFilters = false" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-minus"></i></button>
+                            </div>                                                                                                            
+                        </div>
+                        <div class="row" *ngIf="isShowFilters">
+                            <div class="col-sm-1 text-right">
+                                <h6>From Date</h6>
+                            </div>
+                            <div class="col-sm-2">
+                                    <my-date-picker name="mydate" placeholder="yyyy/mm/dd" [options]="myDatePickerOptions"
+                                    (dateChanged)="onDateFromChanged($event)"></my-date-picker>
+                                <!-- <owl-date-time [(ngModel)]="visitReportFromDate" 
+                                [type]="'calendar'"
+                                [dataType]="'date'"                                
+                                [autoClose]="true"
+                                [dateFormat]="'YYYY/MM/DD'"
+                                [placeHolder]="'YYYY/MM/DD'"
+                                [hourFormat]="'12'"
+                                [selectionMode]="'single'"
+                                name="visitReportFromDate"
+                                [locale]="en"></owl-date-time>   -->                                              
+                            </div>
+                            <div class="col-sm-1 text-right">
+                                <h6>To Date</h6>
+                            </div>
+                            <div class="col-sm-2">
+                                    <my-date-picker name="mydate" placeholder="yyyy/mm/dd" [options]="myDatePickerOptions"
+                                    (dateChanged)="onDateEndChanged($event)"></my-date-picker>
+                                <!-- <owl-date-time [(ngModel)]="visitReportToDate" 
+                                [type]="'calendar'"
+                                [dataType]="'date'"
+                                [autoClose]="true"
+                                [dateFormat]="'YYYY/MM/DD'"
+                                [placeHolder]="'YYYY/MM/DD'"
+                                [hourFormat]="'12'"                                
+                                [selectionMode]="'single'"
+                                name="visitReportToDate" 
+                                [locale]="en"></owl-date-time>   -->                                              
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control" name="importance"
+                                    id="importance" [(ngModel)]="importance"
+                                    (change)="resetPagination()">
+                                    <option value="All">All</option>                                            
+                                    <option value="Priority">Priority</option>
+                                    <option value="Key Account">Key Account</option>
+                                    <option value="Other Account">Other Account</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button"
+                                    (click)="resetPagination()"
+                                    class="btn btn-sm btn-info">Get Report</button>
+                            </div>                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>   
+        <div class="row" *ngIf="true==false">
+                <div class="col col-sm-12">
+                    <div class="card mb-3">
+                        <div class="card-block">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <select class="form-control" name="currentMonth"
+                                        id="currentMonth" [(ngModel)]="currentMonth"
+                                        (change)="resetPagination()">
+                                        <option value="All">Current Financial Year</option>
+                                        <option *ngFor="let item of visitsMonths" value="{{ item }}">{{ item }}</option>
+                                    </select>
+                                </div>                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>               
+        <div class="row" >
+                <div class="col col-sm-12">
+                    <div class="card mb-3">
+                        <div class="card-block">                            
+                            <div class="row">
+                                <div class="col-sm-10">
+                                    <h4 class="pull-left">Visit Summary</h4>
+                                </div>
+                                <div class="col-sm-2 pull-right" *ngIf="!isShowVisitSummery" >
+                                    <button (click)="isShowVisitSummery = true" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-plus"></i></button>
+                                </div>
+                                <div class="col-sm-2 pull-right" *ngIf="isShowVisitSummery" >
+                                    <button (click)="isShowVisitSummery = false" style="color:white" class="btn btn-info pull-right btn-sm"><i class="fa fa-minus"></i></button>
+                                </div>                                                                                                            
+                            </div>
+                                <div class="table-responsive" *ngIf="isShowVisitSummery" >
+                                    <br>
+                                    <table class="table table-bordered">                                        
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th class="text-center">Today</th>
+                                                <th class="text-center">Last Month</th>
+                                                <th class="text-center">MTD</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th class="text-center">Visits</th>
+                                                <td class="text-center">{{ visitsSummeryModel.Today }} </td>
+                                                <td class="text-center">{{ visitsSummeryModel.LastMonth }} </td>
+                                                <td class="text-center">{{ visitsSummeryModel.MTD }} </td>                                 
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+        <div class="row" >
+            <div class="col col-sm-12">
+                <div class="card mb-3">
+                    <div class="card-block">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h4>Visit Details</h4>
+                            </div>                            
+                            <div class="col-sm-3">
+                                <input type="text" id="searchVisitsReport" name="searchVisitsReport" 
+                                    class="form-control"
+                                    placeholder="Search..." [(ngModel)]="searchVisitsReport">
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button" 
+                                    class="btn btn-info btn-sm" 
+                                    (click)="getDataBySearch()">Search</button>
+                            </div>
+                            <div class="col-sm-1">
+                                <button (click)="callMethod('excel')" 
+                                    class="btn btn-info btn-sm">EXCEL</button>
+                            </div>
+                            <div class="col-sm-2" *ngIf="true == false">
+                                No of Records:
+                                <select class="form-control" name="paginationModelCurrentPerPage"                                    
+                                    id="paginationModelCurrentPerPage"                                     
+                                    [(ngModel)]="paginationModel.PerPage"
+                                    (change)="getVisitsDetails()">
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-1" *ngIf="true==false">
+                                <button (click)="callMethod('pdf')" 
+                                    class="btn btn-info btn-sm">PDF</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive" 
+                            style="background-color: #FFF;">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th (click)="sort('SrNo')" class="text-center"> Sr No&nbsp;<span class="fa fa-sort" *ngIf="key =='SrNo'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('EmpCode')" class="text-center"> EmpCode&nbsp;<span class="fa fa-sort" *ngIf="key =='EmpCode'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('User')" class="text-center"> User&nbsp;<span class="fa fa-sort" *ngIf="key =='User'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('TerritoryCode')" class="text-center"> Territory<br>Code&nbsp;<span class="fa fa-sort" *ngIf="key =='TerritoryCode'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('DealerClassification')" class="text-center"> Dealer<br>Classification&nbsp;<span class="fa fa-sort" *ngIf="key =='DealerClassification'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('AccountType')" class="text-center"> Account<br>Type&nbsp;<span class="fa fa-sort" *ngIf="key =='AccountType'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('Importance')" class="text-center"> Importance &nbsp;<span class="fa fa-sort" *ngIf="key =='Importance'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>                                        
+                                        <th (click)="sort('FirmName')" class="text-center"> Firm Name&nbsp;<span class="fa fa-sort" *ngIf="key =='FirmName'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('VisitType')" class="text-center"> Visit Type&nbsp;<span class="fa fa-sort" *ngIf="key =='VisitType'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('MetWhom')" class="text-center"> Met Whom&nbsp;<span class="fa fa-sort" *ngIf="key =='MetWhom'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('Objective')" class="text-center"> Objective&nbsp;<span class="fa fa-sort" *ngIf="key =='Objective'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('PlanDate')" class="text-center"> Plan Date&nbsp;<span class="fa fa-sort" *ngIf="key =='PlanDate'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('VisitDate')" class="text-center"> Visit Date&nbsp;<span class="fa fa-sort" *ngIf="key =='VisitDate'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('Remarks')" class="text-center"> Remarks&nbsp;<span class="fa fa-sort" *ngIf="key =='Remarks'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <!-- <th (click)="sort('Address')" class="text-center"> Address&nbsp;<span class="fa fa-sort" *ngIf="key =='Address'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th> -->
+                                        <th (click)="sort('WithRm')" class="text-center"> With Rm&nbsp;<span class="fa fa-sort" *ngIf="key =='WithRm'" [ngClass]="{'fa-sort-asc':reverse,'fa-sort-desc':!reverse}"></span></th>
+                                        <th (click)="sort('Image')" class="text-center"> Image&nbsp;<span class="fa fa-sort" *ngIf="key =='WithRm'" ></span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of visitsModelList;let idx = index;">
+                                        <td class="text-center">
+                                            {{ srNo + idx + 1 }}
+                                        </td>
+                                        <td class="text-center">{{item.EmpCode}}</td>
+                                        <td class="text-center">{{item.User}}</td>
+                                        
+                                        <td class="text-center">{{item.TerritoryCode}}</td>
+                                        <td class="text-center">{{item.DealerClassification}}</td>
+                                        <td class="text-center">{{item.AccountType}}</td>
+                                        <td class="text-center">{{item.Importance}}</td>                                        
+                                        <td class="text-center">{{item.FirmName}}</td>									
+                                        <td class="text-center">{{item.VisitType}}</td>
+                                        <td class="text-center">{{item.MetWhom}}</td>
+                                        <td class="text-center">{{item.Objective}}</td>
+                                        <td class="text-left">{{item.PlanDate}}</td>
+                                        <td class="text-left">{{item.VisitDate}}</td>									
+                                        <td class="text-center">{{item.Remarks}}</td>	
+                                        <!-- <td class="text-center">{{item.Address}}</td>	 -->
+                                        <td class="text-center">{{item.WithRm}}</td>	
+                                        <td class="text-center">
+                                            <a (click)="updateCurrentImage(item.Image);open(content)">
+                                                <img src="{{ item.Image || errorImage }}" width="100" >
+                                            </a>                                            
+                                        </td>
+                                    </tr>
+                                </tbody>                                
+                            </table>                            
+                            <ngb-pagination [(collectionSize)]="paginationModel.TotalRecords" 
+                                        (pageChange)="changePage($event)" 
+                                        [(page)]="paginationModel.CurrentPage" 
+                                        [(maxSize)]="paginationModel.PerPage" 
+                                        [rotate]="true" [ellipses]="false" 
+                                        [boundaryLinks]="true" size="sm"></ngb-pagination>
+                        </div>    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ng-template #content let-c="close" let-d="dismiss">		
+        <div class="modal-header">
+                <h4 class="modal-title">Image Preview</h4>
+                <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">        
+                <img class="text-center" class="image-center" src="{{ currentImageUrl }}">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="c('Close click')">Close</button>
+            </div>		
+    </ng-template>
+    <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '0px' }"></ngx-loading>    

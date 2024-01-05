@@ -1,0 +1,30 @@
+export class WeeklyBDReportModel {
+    public BusinessDevelopement : string;
+    public VisitsCompletedNoWeek : string;
+    public VisitsCompletedNoMTD : string;
+    public VisitsCompletedNoYTD : string;
+    public NewEnquiriesNoWeek : string;
+    public NewEnquiriesValueWeek : string;
+    public NewEnquiriesNoMTD : string;
+    public NewEnquiriesValueMTD : string;
+    public NewEnquiriesNoYTD : string;
+    public NewEnquiriesValueYTD : string;
+    public NewPipelineNoWeek : string;
+    public NewPipelineValueWeek : string;
+    public NewPipelineNoMTD : string;
+    public NewPipelineValueMTD : string;
+    public NewPipelineNoYTD : string;
+    public NewPipelineValueYTD : string;        
+    public ConversionNoWeek : string;
+    public ConversionValueWeek : string;
+    public ConversionNoMTD : string;
+    public ConversionValueMTD : string;
+    public ConversionNoYTD : string;
+    public ConversionValueYTD : string;    
+    public OrderLostNoWeek : string;
+    public OrderLostValueWeek : string;
+    public OrderLostNoMTD : string;
+    public OrderLostValueMTD : string;
+    public OrderLostNoYTD : string;
+    public OrderLostValueYTD : string;
+}

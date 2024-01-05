@@ -1,0 +1,8 @@
+<app-header [isSidebarInActive]="isSidebarInActive"
+        (sidebarEvent)="getSidebarEvent($event)"></app-header>
+<ng-container *ngIf="!isSidebarInActive">
+        <app-sidebar></app-sidebar>
+</ng-container>
+<section class="main-container" [ngClass]="{'hide-sidebar':isSidebarInActive}" style="background-color:#EDEEF2;">        
+    <router-outlet></router-outlet>
+</section>

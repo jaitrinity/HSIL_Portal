@@ -1,0 +1,45 @@
+<div [@routerTransition]>
+    <app-page-header [heading]="'User Details'" [icon]="'fa-user'"></app-page-header>
+    <div class="row">
+        <div class="col col-lg-12">
+            <div class="card mb-3">
+                <div class="col col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <label>Id:</label> {{ userDetailsModel.EmployeeId }}
+                        </div>
+                        <div class="col-lg-4">
+                            <label>Name:</label> {{ userDetailsModel.EmployeeName }}
+                        </div>
+                        <div class="col-lg-4">
+                            <label>Role:</label> {{ userDetailsModel.Role }}
+                        </div>
+                        <div class="col-lg-4">
+                            <label>Brand:</label> {{ userDetailsModel.Brand }}
+                        </div>
+                        <div class="col-lg-4">
+                            <label>Department:</label> {{ userDetailsModel.Department }}
+                        </div>
+                        <div class="col-lg-4">
+                            <label>Email:</label> {{ userDetailsModel.Email }}
+                        </div>
+                        <div class="col-lg-4">
+                            <label>Hub:</label> {{ userDetailsModel.Hub }}
+                        </div>
+                        <div class="col-lg-4">
+                            <label>Location:</label> {{ userDetailsModel.Location }}
+                        </div>
+                        <div class="col-lg-4">
+                            <label>Mobile:</label> {{ userDetailsModel.Mobile }}
+                        </div>
+                        <div class="col-lg-4">
+                            <label>Zone:</label> {{ userDetailsModel.Zone }}
+                        </div>
+                        <div class="col-lg-4">
+                            <label>Regrastration Date:</label> {{ userDetailsModel.RegrastrationDate }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
